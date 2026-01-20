@@ -1,0 +1,1 @@
+# Emmetienne.TOMLConfigManager
