@@ -1,22 +1,22 @@
-﻿using McTools.Xrm.Connection;
+﻿using Emmetienne.TOMLConfigManager.Controls;
+using Emmetienne.TOMLConfigManager.Models;
+using Emmetienne.TOMLConfigManager.Services;
+using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tomlyn;
 using XrmToolBox.Extensibility;
 
 namespace Emmetienne.TOMLConfigManager
 {
-    public partial class TOMLConfigurationManagerControl : PluginControlBase
+    public partial class TOMLConfigurationManagerControl : MultipleConnectionsPluginControlBase
     {
         private Settings mySettings;
+        private Dictionary<Guid, TOMLOperationExecutable> TOMLOperationsExecutable = new Dictionary<Guid, TOMLOperationExecutable>();
 
         public TOMLConfigurationManagerControl()
         {
@@ -45,11 +45,20 @@ namespace Emmetienne.TOMLConfigManager
             CloseTool();
         }
 
-        private void tsbSample_Click(object sender, EventArgs e)
+        private void openTomlToolStripButton_Click(object sender, EventArgs e)
         {
             // The ExecuteMethod method handles connecting to an
             // organization if XrmToolBox is not yet connected
-            ExecuteMethod(GetAccounts);
+            //ExecuteMethod(GetAccounts);
+            // open a prompt to load a toml file from disk and display its content in the richtextbox
+            var openFileDialog = new OpenFileDialog();
+
+            openFileDialog.Filter = "TOML files (*.toml)|*.toml|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var tomlContent = System.IO.File.ReadAllText(openFileDialog.FileName);
+                tomlRichTextBox.Text = tomlContent;
+            }
         }
 
         private void GetAccounts()
@@ -93,15 +102,170 @@ namespace Emmetienne.TOMLConfigManager
         /// <summary>
         /// This event occurs when the connection has been updated in XrmToolBox
         /// </summary>
+        /// <summary>
+        /// This event occurs when the connection has been updated in XrmToolBox
+        /// </summary>
         public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
         {
+            if (Service == newService)
+                return;
+
             base.UpdateConnection(newService, detail, actionName, parameter);
 
-            if (mySettings != null && detail != null)
+            if (actionName.Equals("AdditionalOrganization", StringComparison.OrdinalIgnoreCase))
+                return;
+        }
+
+        private void parseButton_Click(object sender, EventArgs e)
+        {
+            var tomlContent = tomlRichTextBox.Text;
+
+            if (string.IsNullOrWhiteSpace(tomlContent))
             {
-                mySettings.LastUsedOrganizationWebappUrl = detail.WebApplicationUrl;
-                LogInfo("Connection has changed to: {0}", detail.WebApplicationUrl);
+                MessageBox.Show("No TOML operations to parse");
+                return;
             }
+
+            try
+            {
+                var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(tomlContent);
+
+                var tomlOperationList = new List<TOMLOperationRaw>();
+
+                TOMLOperationsExecutable = new Dictionary<Guid, TOMLOperationExecutable>();
+
+                foreach (var singleTOMLOperation in TOMLOperationsDeserialized.operation)
+                {
+                    for (int i = 0; i < singleTOMLOperation.Rows.Count; i++)
+                    {
+                        var row = singleTOMLOperation.Rows[i];
+                        int expected = singleTOMLOperation.MatchOn.Count;
+
+                        if (row.Count != expected)
+                        {
+                            throw new Exception(
+                               $"The numbers of fields in the row do not match the expected count for the followin TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
+                            );
+                        }
+
+                        if (singleTOMLOperation.Fields?.Count != singleTOMLOperation.Values?.Count)
+                        {
+                            throw new Exception(
+                               $"The numbers of fields and values do not match for the following TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
+                            );
+                        }
+
+
+                        var single = new TOMLOperationExecutable();
+
+                        single.Type = singleTOMLOperation.Type;
+                        single.Table = singleTOMLOperation.Table;
+                        single.MatchOn = singleTOMLOperation.MatchOn;
+                        single.Row = row;
+                        single.Fields = singleTOMLOperation.Fields;
+                        single.Values = singleTOMLOperation.Values;
+                        single.IgnoreFields = singleTOMLOperation.IgnoreFields;
+
+
+                        TOMLOperationsExecutable[single.OperationId] = single;
+
+                        var card = new TOMLCardControl();
+
+                        card.AddField("Type", single.Type, FieldType.PlainText);
+                        card.AddField("Table", single.Table, FieldType.PlainText);
+                        card.AddField("Match On", string.Join(", ", single.MatchOn), FieldType.PlainText);
+                        card.AddField("Row", single.Row != null ? string.Join(", ", single.Row) : "", FieldType.PlainText);
+
+                        if (single.Type.Equals("upsert", StringComparison.OrdinalIgnoreCase))
+                        {
+                            card.AddField("Ignore Fields", single.IgnoreFields != null ? string.Join(", ", single.IgnoreFields) : "", FieldType.PlainText);
+                        }
+
+                        if (single.Type.Equals("replace", StringComparison.OrdinalIgnoreCase))
+                        {
+                            card.AddField("Field", string.Join(",", single.Fields), FieldType.PlainText);
+
+
+                            var valueDisplayString = string.Empty;
+
+                            for (int y = 0; y < single.Fields.Count; y++)
+                            {
+                                valueDisplayString += $"[{single.Fields[y]}]:{Environment.NewLine}{single.Values[y]}{Environment.NewLine}";
+                            }
+
+                            card.AddField("Value", valueDisplayString, FieldType.Multiline);
+                        }
+
+                        card.OperationId = single.OperationId;
+
+                        panelCards.Controls.Add(card);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error parsing TOML: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void executeOperationButton_Click(object sender, EventArgs e)
+        {
+            if (Service == null)
+            {
+                MessageBox.Show("Please connect to an organization first");
+                return;
+            }
+
+            if (this.AdditionalConnectionDetails == null && this.AdditionalConnectionDetails.Count == 0)
+            {
+                MessageBox.Show("Please select a second environment first");
+                return;
+            }
+
+            var configurationService = new TOMLConfigurationService(Service, this.AdditionalConnectionDetails[0].GetCrmServiceClient());
+
+            var TOMLOperationsExecutableSelected = new List<TOMLOperationExecutable>();
+
+            foreach (TOMLCardControl control in panelCards.Controls)
+            {
+                if (!control.IsSelected)
+                    continue;
+
+                TOMLOperationsExecutableSelected.Add(TOMLOperationsExecutable[control.OperationId]);
+            }
+
+            configurationService.PortConfiguration(TOMLOperationsExecutableSelected);
+
+            foreach (TOMLCardControl control in panelCards.Controls)
+            {
+                var controlUniqueId = control.OperationId;
+
+                var tomlOperationExecutableFound = TOMLOperationsExecutableSelected.FirstOrDefault(t => t.OperationId == controlUniqueId);
+
+                if (tomlOperationExecutableFound == null)
+                    continue;
+
+                if (tomlOperationExecutableFound.Success)
+                    control.SetOk();
+                else
+                    control.SetKo(tomlOperationExecutableFound.ErrorMessage);
+            }
+        }
+
+        private void secondEnvToolStripButton_Click(object sender, EventArgs e)
+        {
+            AddAdditionalOrganization();
+
+            if (this.AdditionalConnectionDetails.Count == 0)
+            {
+                this.secondEnvToolStripButton.Text = "Second Env: None";
+                return;
+            }
+
+            if (this.AdditionalConnectionDetails != null && this.AdditionalConnectionDetails.Count > 1)
+                this.RemoveAdditionalOrganization(this.AdditionalConnectionDetails[0]);
+
+            this.secondEnvToolStripButton.Text = this.AdditionalConnectionDetails[0].OrganizationFriendlyName;
         }
     }
 }
