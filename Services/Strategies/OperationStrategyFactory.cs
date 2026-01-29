@@ -12,6 +12,8 @@
                     return new ReplaceOperationStrategy();
                 case "delete":
                     return new DeleteOperationStrategy();
+                case "create":
+                    return new CreateOperationStrategy();
                 default:
                     return null;
             }

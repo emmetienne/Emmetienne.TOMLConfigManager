@@ -8,9 +8,9 @@ namespace Emmetienne.TOMLConfigManager.Managers
 {
     public class MetadataManager : Singleton<MetadataManager>
     {
-        private Dictionary<string, Dictionary<string, AttributeTypeCode>> metadataCache = new Dictionary<string, Dictionary<string, AttributeTypeCode>>();
+        private Dictionary<string, Dictionary<string, FieldMetadata>> metadataCache = new Dictionary<string, Dictionary<string, FieldMetadata>>();
 
-        public AttributeTypeCode? GetAttributeTypeCode(string entityLogicalName, string fieldLogicalName, EntityMetadataRepository entitymetadataRepository)
+        public FieldMetadata GetAttributeTypeCode(string entityLogicalName, string fieldLogicalName, EntityMetadataRepository entitymetadataRepository)
         {
             if (metadataCache.ContainsKey(entityLogicalName) && metadataCache[entityLogicalName].ContainsKey(fieldLogicalName))
             {
@@ -30,11 +30,18 @@ namespace Emmetienne.TOMLConfigManager.Managers
                 // Ensure the inner dictionary exists before assignment
                 if (!metadataCache.ContainsKey(entityLogicalName))
                 {
-                    metadataCache[entityLogicalName] = new Dictionary<string, AttributeTypeCode>();
+                    metadataCache[entityLogicalName] = new Dictionary<string, FieldMetadata>();
                 }
-                metadataCache[entityLogicalName][fieldLogicalName] = response.AttributeMetadata.AttributeType.Value;
 
-                return response.AttributeMetadata.AttributeType.Value;
+                var fieldMetadata = new FieldMetadata();
+                fieldMetadata.AttributeTypeCode = response.AttributeMetadata.AttributeType.Value;
+
+                if (response.AttributeMetadata.AttributeType == AttributeTypeCode.Lookup)
+                    fieldMetadata.EntityReferenceTarget = ((LookupAttributeMetadata)response.AttributeMetadata).Targets[0];
+
+                metadataCache[entityLogicalName][fieldLogicalName] = fieldMetadata;
+
+                return fieldMetadata;
             }
             catch (Exception ex)
             {

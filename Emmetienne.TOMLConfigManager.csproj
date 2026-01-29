@@ -245,8 +245,10 @@
     <Compile Include="Controls\TOMLCardControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Converters\FieldValueConverter.cs" />
     <Compile Include="Managers\CardManager.cs" />
     <Compile Include="Managers\MetadataManager.cs" />
+    <Compile Include="Models\FieldMetadata.cs" />
     <Compile Include="Models\OperationExecutionContext.cs" />
     <Compile Include="Models\Singleton.cs" />
     <Compile Include="Models\TOMLOperationExecutable.cs" />
@@ -256,6 +258,7 @@
     <Compile Include="Registries\RepositoryRegistry.cs" />
     <Compile Include="Repositories\D365RecordRepository.cs" />
     <Compile Include="Repositories\EntityMetadataRepository.cs" />
+    <Compile Include="Services\Strategies\CreateOperationStrategy.cs" />
     <Compile Include="Services\TOMLConfigurationService.cs" />
     <Compile Include="Services\Strategies\DeleteOperationStrategy.cs" />
     <Compile Include="Services\Strategies\IOperationStrategy.cs" />

@@ -6,7 +6,7 @@ using Microsoft.Xrm.Sdk;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
-    internal class ReplaceOperationStrategy : IOperationStrategy
+    internal class CreateOperationStrategy : IOperationStrategy
     {
         public void ExecuteOperation(OperationExecutionContext operationExecutionContext)
         {
@@ -14,22 +14,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             var operation = operationExecutionContext.OperationExecutable;
 
-            var targetRecords = targetD365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, true);
-
-            if (targetRecords.Entities.Count == 0)
-            {
-                operation.ErrorMessage = ("No record to update found in target environment");
-                return;
-            }
-
-            if (targetRecords.Entities.Count > 1)
-            {
-                operation.ErrorMessage = ("Multiple matching records found in target environment");
-                return;
-            }
-
-            var recordToUpdate = new Entity(operation.Table);
-            recordToUpdate.Id = targetRecords.Entities[0].Id;
+            var recordToCreate = new Entity(operation.Table);
 
             // gestione cache
             for (int i = 0; i < operation.Fields.Count; i++)
@@ -39,10 +24,10 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                 var fieldMetadata = MetadataManager.Instance.GetAttributeTypeCode(operation.Table, operation.Fields[i], targetEntityMetadataRepository);
 
 
-                recordToUpdate[operation.Fields[i]] = FieldValueConverter.Convert(operation.Values[i], fieldMetadata);
+                recordToCreate[operation.Fields[i]] = FieldValueConverter.Convert(operation.Values[i], fieldMetadata);
             }
 
-            targetD365RecordRepository.UpdateRecord(recordToUpdate);
+            targetD365RecordRepository.CreateRecord(recordToCreate);
         }
     }
 }

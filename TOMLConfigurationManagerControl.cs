@@ -134,71 +134,16 @@ namespace Emmetienne.TOMLConfigManager
 
                 TOMLOperationsExecutable = new Dictionary<Guid, TOMLOperationExecutable>();
 
+
                 foreach (var singleTOMLOperation in TOMLOperationsDeserialized.operation)
                 {
-                    for (int i = 0; i < singleTOMLOperation.Rows.Count; i++)
+                    if (singleTOMLOperation.Type.Equals("create", StringComparison.OrdinalIgnoreCase))
                     {
-                        var row = singleTOMLOperation.Rows[i];
-                        int expected = singleTOMLOperation.MatchOn.Count;
-
-                        if (row.Count != expected)
-                        {
-                            throw new Exception(
-                               $"The numbers of fields in the row do not match the expected count for the followin TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
-                            );
-                        }
-
-                        if (singleTOMLOperation.Fields?.Count != singleTOMLOperation.Values?.Count)
-                        {
-                            throw new Exception(
-                               $"The numbers of fields and values do not match for the following TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
-                            );
-                        }
-
-
-                        var single = new TOMLOperationExecutable();
-
-                        single.Type = singleTOMLOperation.Type;
-                        single.Table = singleTOMLOperation.Table;
-                        single.MatchOn = singleTOMLOperation.MatchOn;
-                        single.Row = row;
-                        single.Fields = singleTOMLOperation.Fields;
-                        single.Values = singleTOMLOperation.Values;
-                        single.IgnoreFields = singleTOMLOperation.IgnoreFields;
-
-
-                        TOMLOperationsExecutable[single.OperationId] = single;
-
-                        var card = new TOMLCardControl();
-
-                        card.AddField("Type", single.Type, FieldType.PlainText);
-                        card.AddField("Table", single.Table, FieldType.PlainText);
-                        card.AddField("Match On", string.Join(", ", single.MatchOn), FieldType.PlainText);
-                        card.AddField("Row", single.Row != null ? string.Join(", ", single.Row) : "", FieldType.PlainText);
-
-                        if (single.Type.Equals("upsert", StringComparison.OrdinalIgnoreCase))
-                        {
-                            card.AddField("Ignore Fields", single.IgnoreFields != null ? string.Join(", ", single.IgnoreFields) : "", FieldType.PlainText);
-                        }
-
-                        if (single.Type.Equals("replace", StringComparison.OrdinalIgnoreCase))
-                        {
-                            card.AddField("Field", string.Join(",", single.Fields), FieldType.PlainText);
-
-
-                            var valueDisplayString = string.Empty;
-
-                            for (int y = 0; y < single.Fields.Count; y++)
-                            {
-                                valueDisplayString += $"[{single.Fields[y]}]:{Environment.NewLine}{single.Values[y]}{Environment.NewLine}";
-                            }
-
-                            card.AddField("Value", valueDisplayString, FieldType.Multiline);
-                        }
-
-                        card.OperationId = single.OperationId;
-
-                        panelCards.Controls.Add(card);
+                        CreateTOML(singleTOMLOperation);
+                    }
+                    else
+                    {
+                        NonCreateTOML(singleTOMLOperation);
                     }
                 }
             }
@@ -206,6 +151,113 @@ namespace Emmetienne.TOMLConfigManager
             {
                 MessageBox.Show($"Error parsing TOML: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void CreateTOML(TOMLOperationRaw singleTOMLOperation)
+        {
+            var toast = ToTOMLOperationExecutable(singleTOMLOperation, null);
+
+            var cardo = new TOMLCardControl();
+
+            cardo.AddField("Type", toast.Type, FieldType.PlainText);
+            cardo.AddField("Table", toast.Table, FieldType.PlainText);
+
+            if (toast.Type.Equals("create", StringComparison.OrdinalIgnoreCase))
+            {
+                cardo.AddField("Field", string.Join(",", toast.Fields), FieldType.PlainText);
+
+
+                var valueDisplayString = string.Empty;
+
+                for (int y = 0; y < toast.Fields.Count; y++)
+                {
+                    valueDisplayString += $"[{toast.Fields[y]}]:{Environment.NewLine}{toast.Values[y]}{Environment.NewLine}";
+                }
+
+                cardo.AddField("Value", valueDisplayString, FieldType.Multiline);
+            }
+
+            cardo.OperationId = toast.OperationId;
+            panelCards.Controls.Add(cardo);
+        }
+
+        private void NonCreateTOML(TOMLOperationRaw singleTOMLOperation)
+        {
+            for (int i = 0; i < singleTOMLOperation.Rows.Count; i++)
+            {
+                var row = singleTOMLOperation.Rows[i];
+                int expected = singleTOMLOperation.MatchOn.Count;
+
+                if (row.Count != expected)
+                {
+                    throw new Exception(
+                       $"The numbers of fields in the row do not match the expected count for the followin TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
+                    );
+                }
+
+                if (singleTOMLOperation.Fields?.Count != singleTOMLOperation.Values?.Count)
+                {
+                    throw new Exception(
+                       $"The numbers of fields and values do not match for the following TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
+                    );
+                }
+
+                var single = ToTOMLOperationExecutable(singleTOMLOperation, row);
+
+                var card = new TOMLCardControl();
+
+                card.AddField("Type", single.Type, FieldType.PlainText);
+                card.AddField("Table", single.Table, FieldType.PlainText);
+
+                //if (!single.Type.Equals("create", StringComparison.OrdinalIgnoreCase))
+                //{
+                card.AddField("Match On", string.Join(", ", single.MatchOn), FieldType.PlainText);
+                card.AddField("Row", single.Row != null ? string.Join(", ", single.Row) : "", FieldType.PlainText);
+                //}
+
+
+                if (single.Type.Equals("upsert", StringComparison.OrdinalIgnoreCase))
+                {
+                    card.AddField("Ignore Fields", single.IgnoreFields != null ? string.Join(", ", single.IgnoreFields) : "", FieldType.PlainText);
+                }
+
+                if (single.Type.Equals("replace", StringComparison.OrdinalIgnoreCase))
+                {
+                    card.AddField("Field", string.Join(",", single.Fields), FieldType.PlainText);
+
+
+                    var valueDisplayString = string.Empty;
+
+                    for (int y = 0; y < single.Fields.Count; y++)
+                    {
+                        valueDisplayString += $"[{single.Fields[y]}]:{Environment.NewLine}{single.Values[y]}{Environment.NewLine}";
+                    }
+
+                    card.AddField("Value", valueDisplayString, FieldType.Multiline);
+                }
+
+                card.OperationId = single.OperationId;
+
+                panelCards.Controls.Add(card);
+                continue;
+            }
+        }
+
+        private TOMLOperationExecutable ToTOMLOperationExecutable(TOMLOperationRaw singleTOMLOperation, List<string> row)
+        {
+            var single = new TOMLOperationExecutable();
+
+            single.Type = singleTOMLOperation.Type;
+            single.Table = singleTOMLOperation.Table;
+            single.MatchOn = singleTOMLOperation.MatchOn;
+            single.Row = row;
+            single.Fields = singleTOMLOperation.Fields;
+            single.Values = singleTOMLOperation.Values;
+            single.IgnoreFields = singleTOMLOperation.IgnoreFields;
+
+
+            TOMLOperationsExecutable[single.OperationId] = single;
+            return single;
         }
 
         private void executeOperationButton_Click(object sender, EventArgs e)
