@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationStrategyFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\ReplaceOperationStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\UpsertOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLParsingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLConfigurationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Extensions.cs" />
   </ItemGroup>

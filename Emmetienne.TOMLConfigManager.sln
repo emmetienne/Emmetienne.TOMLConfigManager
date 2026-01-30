@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.2.11415.280 d18.0
+VisualStudioVersion = 18.2.11415.280
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emmetienne.TOMLConfigManager.XrmToolbox", "src\Emmetienne.TOMLConfigManager.XrmToolbox\Emmetienne.TOMLConfigManager.XrmToolbox.csproj", "{685A2BE1-2CCC-4309-AFA5-DD69959A2AEF}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Emmetienne.TOMLConfigManager.Shared", "src\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.shproj", "{687F6AFB-437F-4B18-8310-8AE12CCB7B42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emmetienne.TOMLConfigManager.Pacx", "src\Emmetienne.TOMLConfigManager.Pacx\Emmetienne.TOMLConfigManager.Pacx.csproj", "{48DFE65D-5450-4167-AEB3-71D2EA45C84B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +21,10 @@ Global
 		{685A2BE1-2CCC-4309-AFA5-DD69959A2AEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{685A2BE1-2CCC-4309-AFA5-DD69959A2AEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{685A2BE1-2CCC-4309-AFA5-DD69959A2AEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48DFE65D-5450-4167-AEB3-71D2EA45C84B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48DFE65D-5450-4167-AEB3-71D2EA45C84B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48DFE65D-5450-4167-AEB3-71D2EA45C84B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48DFE65D-5450-4167-AEB3-71D2EA45C84B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -26,11 +32,13 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{685A2BE1-2CCC-4309-AFA5-DD69959A2AEF} = {BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}
 		{687F6AFB-437F-4B18-8310-8AE12CCB7B42} = {BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}
+		{48DFE65D-5450-4167-AEB3-71D2EA45C84B} = {BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B03F7AE-176A-4BE8-95D1-ACC78B0B7296}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems*{48dfe65d-5450-4167-aeb3-71d2ea45c84b}*SharedItemsImports = 5
 		src\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems*{685a2be1-2ccc-4309-afa5-dd69959a2aef}*SharedItemsImports = 4
 		src\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems*{687f6afb-437f-4b18-8310-8ae12ccb7b42}*SharedItemsImports = 13
 	EndGlobalSection

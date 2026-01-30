@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Greg.Xrm.Command.Interfaces" Version="1.1.1" />
+    <PackageReference Include="Tomlyn" Version="0.20.0" />
+  </ItemGroup>
+
+  <Import Project="..\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems" Label="Shared" />
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /E /Y &quot;$(OutDir)&quot; &quot;%25localappdata%25\Greg.Xrm.Command\Plugins\Emmetienne.TOMLConfigManager.Pacx\&quot;" />
+  </Target>
+
+</Project>

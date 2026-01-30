@@ -19,7 +19,7 @@ namespace Emmetienne.TOMLConfigManager.Services
             this.targetOrganizationService = targetOrganizationService;
         }
 
-        public void PortConfiguration(List<TOMLOperationExecutable> TOMLOperationExecutableList)
+        public List<TOMLOperationExecutable> PortConfiguration(List<TOMLOperationExecutable> TOMLOperationExecutableList)
         {
             var repositoryRegistry = new RepositoryRegistry();
 
@@ -46,6 +46,8 @@ namespace Emmetienne.TOMLConfigManager.Services
                     }
                 }
             }
+
+            return TOMLOperationExecutableList;
         }
     }
 }
