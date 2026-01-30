@@ -3,6 +3,7 @@ using Emmetienne.TOMLConfigManager.Registries;
 using Emmetienne.TOMLConfigManager.Repositories;
 using Emmetienne.TOMLConfigManager.Services.Strategies;
 using Microsoft.Xrm.Sdk;
+using System;
 using System.Collections.Generic;
 
 namespace Emmetienne.TOMLConfigManager.Services
@@ -34,8 +35,15 @@ namespace Emmetienne.TOMLConfigManager.Services
                 if (strategy != null)
                 {
                     var operationExecutionContext = new OperationExecutionContext(operation, repositoryRegistry);
-
-                    strategy.ExecuteOperation(operationExecutionContext);
+                    try
+                    {
+                        strategy.ExecuteOperation(operationExecutionContext);
+                    }
+                    catch (Exception ex)
+                    {
+                        operation.ErrorMessage = ex.Message;
+                        continue;
+                    }
                 }
             }
         }

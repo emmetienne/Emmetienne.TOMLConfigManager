@@ -71,15 +71,15 @@ namespace Emmetienne.TOMLConfigManager.Controls
         private int dragStartY = 0;
         private int dragStartOffset = 0;
 
-        // Per copia da click
         private FieldEntry pendingCopyField = null;
         private Point mouseDownLocation;
 
-        // Stato OK/KO
         private bool hasStatus = false;
         private bool isOk = false;
         private string errorMessage = null;
         private Color statusBackColor = Color.White;
+
+        private bool showCheckbox = true;
 
         public TOMLCardControl()
         {
@@ -110,7 +110,15 @@ namespace Emmetienne.TOMLConfigManager.Controls
             hasStatus = true;
             isOk = true;
             errorMessage = null;
-            statusBackColor = Color.FromArgb(200, 230, 200); 
+            statusBackColor = Color.FromArgb(200, 230, 200);
+            
+            IsSelected = false;
+            showCheckbox = false;
+            currentBorderColor = Color.LightGray;
+            targetBorderColor = Color.LightGray;
+            borderThickness = 1f;
+            targetBorderThickness = 1f;
+            
             Invalidate();
         }
 
@@ -119,7 +127,16 @@ namespace Emmetienne.TOMLConfigManager.Controls
             hasStatus = true;
             isOk = false;
             errorMessage = message;
-            statusBackColor = Color.FromArgb(255, 200, 200); 
+            statusBackColor = Color.FromArgb(255, 200, 200);
+            
+            IsSelected = false;
+            showCheckbox = true;
+            
+            currentBorderColor = Color.DarkRed;
+            targetBorderColor = Color.DarkRed;
+            borderThickness = 2f;
+            targetBorderThickness = 2f;
+            
             Invalidate();
         }
 
@@ -129,6 +146,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
             isOk = false;
             errorMessage = null;
             statusBackColor = Color.White;
+            showCheckbox = true; 
             Invalidate();
         }
 
@@ -482,6 +500,9 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
         private void DrawCheckbox(Graphics g)
         {
+            if (!showCheckbox)
+                return;
+            
             using (SolidBrush boxBg = new SolidBrush(Color.White))
                 g.FillRectangle(boxBg, checkboxRect);
 
@@ -540,7 +561,6 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 if (f.ThumbRect != Rectangle.Empty && f.ThumbRect.Contains(p))
                     return (HitType.Thumb, f);
 
-                // Poi la label
                 if (f.LabelArea.Contains(p))
                     return (HitType.Label, f);
 

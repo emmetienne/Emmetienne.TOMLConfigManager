@@ -126,6 +126,9 @@ namespace Emmetienne.TOMLConfigManager
                 return;
             }
 
+            this.panelCards.Controls.Clear();
+            this.TOMLOperationsExecutable = new Dictionary<Guid, TOMLOperationExecutable>();
+
             try
             {
                 var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(tomlContent);
@@ -153,32 +156,39 @@ namespace Emmetienne.TOMLConfigManager
             }
         }
 
+        private TOMLCardControl CreateCardWithCommonFields(TOMLOperationExecutable operation)
+        {
+            var card = new TOMLCardControl();
+            card.AddField("Type", operation.Type, FieldType.PlainText);
+            card.AddField("Table", operation.Table, FieldType.PlainText);
+            card.OperationId = operation.OperationId;
+            return card;
+        }
+
+        private void AddFieldsAndValues(TOMLCardControl card, TOMLOperationExecutable operation)
+        {
+            card.AddField("Field", string.Join(",", operation.Fields), FieldType.PlainText);
+
+            var sb = new System.Text.StringBuilder();
+            for (int y = 0; y < operation.Fields.Count; y++)
+            {
+                sb.AppendLine($"[{operation.Fields[y]}]:");
+                sb.AppendLine(operation.Values[y]);
+            }
+            card.AddField("Value", sb.ToString(), FieldType.Multiline);
+        }
+
         private void CreateTOML(TOMLOperationRaw singleTOMLOperation)
         {
-            var toast = ToTOMLOperationExecutable(singleTOMLOperation, null);
+            var operation = ToTOMLOperationExecutable(singleTOMLOperation, null);
+            var card = CreateCardWithCommonFields(operation);
 
-            var cardo = new TOMLCardControl();
-
-            cardo.AddField("Type", toast.Type, FieldType.PlainText);
-            cardo.AddField("Table", toast.Table, FieldType.PlainText);
-
-            if (toast.Type.Equals("create", StringComparison.OrdinalIgnoreCase))
+            if (operation.Type.Equals("create", StringComparison.OrdinalIgnoreCase))
             {
-                cardo.AddField("Field", string.Join(",", toast.Fields), FieldType.PlainText);
-
-
-                var valueDisplayString = string.Empty;
-
-                for (int y = 0; y < toast.Fields.Count; y++)
-                {
-                    valueDisplayString += $"[{toast.Fields[y]}]:{Environment.NewLine}{toast.Values[y]}{Environment.NewLine}";
-                }
-
-                cardo.AddField("Value", valueDisplayString, FieldType.Multiline);
+                AddFieldsAndValues(card, operation);
             }
 
-            cardo.OperationId = toast.OperationId;
-            panelCards.Controls.Add(cardo);
+            panelCards.Controls.Add(card);
         }
 
         private void NonCreateTOML(TOMLOperationRaw singleTOMLOperation)
@@ -202,44 +212,23 @@ namespace Emmetienne.TOMLConfigManager
                     );
                 }
 
-                var single = ToTOMLOperationExecutable(singleTOMLOperation, row);
+                var operation = ToTOMLOperationExecutable(singleTOMLOperation, row);
+                var card = CreateCardWithCommonFields(operation);
 
-                var card = new TOMLCardControl();
+                card.AddField("Match On", string.Join(", ", operation.MatchOn), FieldType.PlainText);
+                card.AddField("Row", operation.Row != null ? string.Join(", ", operation.Row) : "", FieldType.PlainText);
 
-                card.AddField("Type", single.Type, FieldType.PlainText);
-                card.AddField("Table", single.Table, FieldType.PlainText);
-
-                //if (!single.Type.Equals("create", StringComparison.OrdinalIgnoreCase))
-                //{
-                card.AddField("Match On", string.Join(", ", single.MatchOn), FieldType.PlainText);
-                card.AddField("Row", single.Row != null ? string.Join(", ", single.Row) : "", FieldType.PlainText);
-                //}
-
-
-                if (single.Type.Equals("upsert", StringComparison.OrdinalIgnoreCase))
+                if (operation.Type.Equals("upsert", StringComparison.OrdinalIgnoreCase))
                 {
-                    card.AddField("Ignore Fields", single.IgnoreFields != null ? string.Join(", ", single.IgnoreFields) : "", FieldType.PlainText);
+                    card.AddField("Ignore Fields", operation.IgnoreFields != null ? string.Join(", ", operation.IgnoreFields) : "", FieldType.PlainText);
                 }
 
-                if (single.Type.Equals("replace", StringComparison.OrdinalIgnoreCase))
+                if (operation.Type.Equals("replace", StringComparison.OrdinalIgnoreCase))
                 {
-                    card.AddField("Field", string.Join(",", single.Fields), FieldType.PlainText);
-
-
-                    var valueDisplayString = string.Empty;
-
-                    for (int y = 0; y < single.Fields.Count; y++)
-                    {
-                        valueDisplayString += $"[{single.Fields[y]}]:{Environment.NewLine}{single.Values[y]}{Environment.NewLine}";
-                    }
-
-                    card.AddField("Value", valueDisplayString, FieldType.Multiline);
+                    AddFieldsAndValues(card, operation);
                 }
-
-                card.OperationId = single.OperationId;
 
                 panelCards.Controls.Add(card);
-                continue;
             }
         }
 
@@ -283,7 +272,10 @@ namespace Emmetienne.TOMLConfigManager
                 if (!control.IsSelected)
                     continue;
 
-                TOMLOperationsExecutableSelected.Add(TOMLOperationsExecutable[control.OperationId]);
+                var selectedTOMLOperationSelected = TOMLOperationsExecutable[control.OperationId];
+                selectedTOMLOperationSelected.ErrorMessage = string.Empty;
+
+                TOMLOperationsExecutableSelected.Add(selectedTOMLOperationSelected);
             }
 
             configurationService.PortConfiguration(TOMLOperationsExecutableSelected);
