@@ -246,6 +246,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Converters\FieldValueConverter.cs" />
+    <Compile Include="Eventbus\EventbusSingleton.cs" />
     <Compile Include="Managers\CardManager.cs" />
     <Compile Include="Managers\MetadataManager.cs" />
     <Compile Include="Models\FieldMetadata.cs" />
@@ -285,7 +286,9 @@
       <DependentUpon>TOMLConfigurationManagerControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Components\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
