@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>687f6afb-437f-4b18-8310-8ae12ccb7b42</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Emmetienne.TOMLConfigManager</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\FieldValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Managers\MetadataManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\FieldMetadata.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\OperationExecutionContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Singleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TOMLOperationExecutable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TOMLOperationIndex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TOMLOperationRaw.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TOMLParsed.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Registries\RepositoryRegistry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365RecordRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repositories\EntityMetadataRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\CreateOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\DeleteOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\IOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationStrategyFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\ReplaceOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\UpsertOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLConfigurationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\Extensions.cs" />
+  </ItemGroup>
+</Project>
