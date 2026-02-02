@@ -1,4 +1,6 @@
-﻿using Emmetienne.TOMLConfigManager.Controls;
+﻿using Emmetienne.TOMLConfigManager.Components;
+using Emmetienne.TOMLConfigManager.Controls;
+using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Services;
 using McTools.Xrm.Connection;
@@ -7,9 +9,7 @@ using Microsoft.Xrm.Sdk.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Services.Description;
 using System.Windows.Forms;
-using Tomlyn;
 using XrmToolBox.Extensibility;
 
 namespace Emmetienne.TOMLConfigManager
@@ -18,10 +18,17 @@ namespace Emmetienne.TOMLConfigManager
     {
         private Settings mySettings;
         private Dictionary<Guid, TOMLOperationExecutable> TOMLOperationsExecutable = new Dictionary<Guid, TOMLOperationExecutable>();
+        private readonly XrmToolboxTOMLLogger logger;
+
+        private XrmToolboxLoggingComponent loggingComponent;
 
         public TOMLConfigurationManagerControl()
         {
             InitializeComponent();
+
+            logger = new XrmToolboxTOMLLogger();
+
+            loggingComponent = new XrmToolboxLoggingComponent(this.logDataGridView);
         }
 
         private void MyPluginControl_Load(object sender, EventArgs e)
@@ -48,17 +55,29 @@ namespace Emmetienne.TOMLConfigManager
 
         private void openTomlToolStripButton_Click(object sender, EventArgs e)
         {
-            // The ExecuteMethod method handles connecting to an
-            // organization if XrmToolBox is not yet connected
-            //ExecuteMethod(GetAccounts);
-            // open a prompt to load a toml file from disk and display its content in the richtextbox
-            var openFileDialog = new OpenFileDialog();
-
-            openFileDialog.Filter = "TOML files (*.toml)|*.toml|All files (*.*)|*.*";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                var tomlContent = System.IO.File.ReadAllText(openFileDialog.FileName);
-                tomlRichTextBox.Text = tomlContent;
+                var openFileDialog = new OpenFileDialog();
+
+                openFileDialog.Filter = "TOML files (*.toml)|*.toml|All files (*.*)|*.*";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var tomlContent = System.IO.File.ReadAllText(openFileDialog.FileName);
+                    tomlRichTextBox.Text = tomlContent;
+                }
+                else
+                {
+                    logger.LogInfo("TOML file loading canceled by user.");
+                    return;
+                }
+
+                logger.LogInfo($"TOML file '{openFileDialog.FileName}' loaded.");
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Error loading TOML file: {ex.Message}");
             }
         }
 
@@ -133,7 +152,8 @@ namespace Emmetienne.TOMLConfigManager
             try
             {
                 var TOMLParsingService = new TOMLParsingService();
-                var TOMLOperationsDeserialized = TOMLParsingService.ParseToTOMLExecutables(tomlContent);
+                // da sistemare quando finisco l'implementazione toml
+                var TOMLOperationsDeserialized = TOMLParsingService.ParseToTOMLExecutables(tomlContent, null);
 
                 TOMLOperationsExecutable = new Dictionary<Guid, TOMLOperationExecutable>();
 
@@ -212,7 +232,7 @@ namespace Emmetienne.TOMLConfigManager
                 return;
             }
 
-            var configurationService = new TOMLConfigurationService(Service, this.AdditionalConnectionDetails[0].GetCrmServiceClient());
+            var configurationService = new TOMLConfigurationService(Service, this.AdditionalConnectionDetails[0].GetCrmServiceClient(), logger);
 
             var TOMLOperationsExecutableSelected = new List<TOMLOperationExecutable>();
 

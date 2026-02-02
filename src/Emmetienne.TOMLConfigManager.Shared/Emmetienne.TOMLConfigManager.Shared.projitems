@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FieldValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logger\ILogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\MetadataManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\FieldMetadata.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\OperationExecutionContext.cs" />

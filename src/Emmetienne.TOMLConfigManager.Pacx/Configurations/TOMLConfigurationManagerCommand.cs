@@ -6,7 +6,10 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
     public class TOMLConfigurationManagerCommand
     {
         [Option("path", "p", HelpText = "The path for the TOML file")]
-        public string TOMLConfigFilePath { get; set; }
+        public string? TOMLConfigFilePath { get; set; }
+
+        [Option("TOMLstring", "ts", HelpText = "The TOML string")]
+        public string? TOMLString { get; set; }
 
         [Option("source", "s", HelpText = "Name of the source connection to a D365 environment")]
         public string SourceConnection { get; set; }

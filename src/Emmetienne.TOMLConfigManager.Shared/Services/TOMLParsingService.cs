@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Models;
+﻿using Emmetienne.TOMLConfigManager.Logger;
+using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Utilities;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,20 @@ namespace Emmetienne.TOMLConfigManager.Services
 {
     public class TOMLParsingService
     {
-        public List<TOMLOperationExecutable> ParseToTOMLExecutables(string TOMLcontent)
+        public List<TOMLOperationExecutable> ParseToTOMLExecutables(string TOMLcontent, ILogger logger)
         {
-            var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(TOMLcontent);
+            TOMLParsed TOMLOperationsDeserialized = null;
+            try
+            {
+
+                TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(TOMLcontent);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = $"Failed to deserialize the provided TOML content. Error: {ex.Message}";
+                logger.LogError(errorMessage);
+                return null;
+            }
 
             var TOMLExecutables = new List<TOMLOperationExecutable>();
 
@@ -29,16 +41,17 @@ namespace Emmetienne.TOMLConfigManager.Services
 
                     if (row.Count != expected)
                     {
-                        throw new Exception(
-                           $"The numbers of fields in the row do not match the expected count for the followin TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
-                        );
+                        var errorMessage = $"The numbers of fields in the row do not match the expected count for the following TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}";
+
+                        logger.LogError(errorMessage);
+                        throw new Exception(errorMessage);
                     }
 
                     if (singleTOMLOperation.Fields?.Count != singleTOMLOperation.Values?.Count)
                     {
-                        throw new Exception(
-                           $"The numbers of fields and values do not match for the following TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}"
-                        );
+                        var errorMessage = $"The numbers of fields and values do not match for the following TOML:{Environment.NewLine}{Toml.FromModel(singleTOMLOperation)}";
+                        logger.LogError(errorMessage);
+                        throw new Exception(errorMessage);
                     }
 
                     TOMLExecutables.Add(singleTOMLOperation.ToTOMLOperationExecutable(i));

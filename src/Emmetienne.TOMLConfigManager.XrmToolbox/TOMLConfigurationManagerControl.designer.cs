@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using Emmetienne.TOMLConfigManager.Controls;
+using System.Collections.Specialized;
 
 namespace Emmetienne.TOMLConfigManager
 {
@@ -32,20 +33,26 @@ namespace Emmetienne.TOMLConfigManager
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TOMLConfigurationManagerControl));
             this.toolStripMenu = new System.Windows.Forms.ToolStrip();
-            this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.openFileToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.mainSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.controlsSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.secondEnvToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.mainSplitContainer = new SplitContainerWithHandles();
+            this.controlsSplitContainer = new SplitContainerWithHandles();
             this.tomlTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.parseButton = new System.Windows.Forms.Button();
             this.tomlRichTextBox = new System.Windows.Forms.RichTextBox();
             this.operationTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.panelCards = new System.Windows.Forms.FlowLayoutPanel();
             this.executeOperationButton = new System.Windows.Forms.Button();
-            this.secondEnvToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.logGroupBox = new System.Windows.Forms.GroupBox();
+            this.logDataGridView = new System.Windows.Forms.DataGridView();
+            this.timestamp = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.message = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Severity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel1.SuspendLayout();
+            this.mainSplitContainer.Panel2.SuspendLayout();
             this.mainSplitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.controlsSplitContainer)).BeginInit();
             this.controlsSplitContainer.Panel1.SuspendLayout();
@@ -53,6 +60,8 @@ namespace Emmetienne.TOMLConfigManager
             this.controlsSplitContainer.SuspendLayout();
             this.tomlTableLayoutPanel.SuspendLayout();
             this.operationTableLayout.SuspendLayout();
+            this.logGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.logDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -68,11 +77,6 @@ namespace Emmetienne.TOMLConfigManager
             this.toolStripMenu.TabIndex = 4;
             this.toolStripMenu.Text = "toolStrip1";
             // 
-            // tssSeparator1
-            // 
-            this.tssSeparator1.Name = "tssSeparator1";
-            this.tssSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // openFileToolStripButton
             // 
             this.openFileToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -81,16 +85,36 @@ namespace Emmetienne.TOMLConfigManager
             this.openFileToolStripButton.Text = "Open TOML";
             this.openFileToolStripButton.Click += new System.EventHandler(this.openTomlToolStripButton_Click);
             // 
+            // tssSeparator1
+            // 
+            this.tssSeparator1.Name = "tssSeparator1";
+            this.tssSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // secondEnvToolStripButton
+            // 
+            this.secondEnvToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.secondEnvToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("secondEnvToolStripButton.Image")));
+            this.secondEnvToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.secondEnvToolStripButton.Name = "secondEnvToolStripButton";
+            this.secondEnvToolStripButton.Size = new System.Drawing.Size(107, 22);
+            this.secondEnvToolStripButton.Text = "Second Env: None";
+            this.secondEnvToolStripButton.Click += new System.EventHandler(this.secondEnvToolStripButton_Click);
+            // 
             // mainSplitContainer
             // 
             this.mainSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainSplitContainer.Location = new System.Drawing.Point(0, 25);
             this.mainSplitContainer.Name = "mainSplitContainer";
             this.mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.mainSplitContainer.TabStop = false;
             // 
             // mainSplitContainer.Panel1
             // 
             this.mainSplitContainer.Panel1.Controls.Add(this.controlsSplitContainer);
+            // 
+            // mainSplitContainer.Panel2
+            // 
+            this.mainSplitContainer.Panel2.Controls.Add(this.logGroupBox);
             this.mainSplitContainer.Size = new System.Drawing.Size(1035, 668);
             this.mainSplitContainer.SplitterDistance = 497;
             this.mainSplitContainer.TabIndex = 5;
@@ -100,6 +124,7 @@ namespace Emmetienne.TOMLConfigManager
             this.controlsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlsSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.controlsSplitContainer.Name = "controlsSplitContainer";
+            this.controlsSplitContainer.TabStop = false;
             // 
             // controlsSplitContainer.Panel1
             // 
@@ -184,15 +209,57 @@ namespace Emmetienne.TOMLConfigManager
             this.executeOperationButton.UseVisualStyleBackColor = true;
             this.executeOperationButton.Click += new System.EventHandler(this.executeOperationButton_Click);
             // 
-            // secondEnvToolStripButton
+            // logGroupBox
             // 
-            this.secondEnvToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.secondEnvToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("secondEnvToolStripButton.Image")));
-            this.secondEnvToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.secondEnvToolStripButton.Name = "secondEnvToolStripButton";
-            this.secondEnvToolStripButton.Size = new System.Drawing.Size(107, 22);
-            this.secondEnvToolStripButton.Text = "Second Env: None";
-            this.secondEnvToolStripButton.Click += new System.EventHandler(this.secondEnvToolStripButton_Click);
+            this.logGroupBox.Controls.Add(this.logDataGridView);
+            this.logGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logGroupBox.Location = new System.Drawing.Point(0, 0);
+            this.logGroupBox.Name = "logGroupBox";
+            this.logGroupBox.Size = new System.Drawing.Size(1035, 167);
+            this.logGroupBox.TabIndex = 0;
+            this.logGroupBox.TabStop = false;
+            this.logGroupBox.Text = "Logs";
+            // 
+            // logDataGridView
+            // 
+            this.logDataGridView.AllowUserToAddRows = false;
+            this.logDataGridView.AllowUserToDeleteRows = false;
+            this.logDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.ColumnHeader;
+            this.logDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
+            this.logDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.logDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.logDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.logDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.timestamp,
+            this.message,
+            this.Severity});
+            this.logDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.logDataGridView.Location = new System.Drawing.Point(3, 16);
+            this.logDataGridView.Name = "logDataGridView";
+            this.logDataGridView.ReadOnly = true;
+            this.logDataGridView.Size = new System.Drawing.Size(1029, 148);
+            this.logDataGridView.TabIndex = 0;
+            // 
+            // timestamp
+            // 
+            this.timestamp.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.timestamp.HeaderText = "Timestamp";
+            this.timestamp.Name = "timestamp";
+            this.timestamp.ReadOnly = true;
+            // 
+            // message
+            // 
+            this.message.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.message.HeaderText = "Message";
+            this.message.Name = "message";
+            this.message.ReadOnly = true;
+            // 
+            // Severity
+            // 
+            this.Severity.HeaderText = "Severity";
+            this.Severity.Name = "Severity";
+            this.Severity.ReadOnly = true;
+            this.Severity.Width = 70;
             // 
             // TOMLConfigurationManagerControl
             // 
@@ -206,6 +273,7 @@ namespace Emmetienne.TOMLConfigManager
             this.toolStripMenu.ResumeLayout(false);
             this.toolStripMenu.PerformLayout();
             this.mainSplitContainer.Panel1.ResumeLayout(false);
+            this.mainSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).EndInit();
             this.mainSplitContainer.ResumeLayout(false);
             this.controlsSplitContainer.Panel1.ResumeLayout(false);
@@ -214,6 +282,8 @@ namespace Emmetienne.TOMLConfigManager
             this.controlsSplitContainer.ResumeLayout(false);
             this.tomlTableLayoutPanel.ResumeLayout(false);
             this.operationTableLayout.ResumeLayout(false);
+            this.logGroupBox.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.logDataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -238,5 +308,10 @@ namespace Emmetienne.TOMLConfigManager
         private System.Windows.Forms.TableLayoutPanel operationTableLayout;
         private System.Windows.Forms.Button executeOperationButton;
         private System.Windows.Forms.ToolStripButton secondEnvToolStripButton;
+        private System.Windows.Forms.GroupBox logGroupBox;
+        private System.Windows.Forms.DataGridView logDataGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn timestamp;
+        private System.Windows.Forms.DataGridViewTextBoxColumn message;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Severity;
     }
 }

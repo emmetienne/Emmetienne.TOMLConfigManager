@@ -1,12 +1,19 @@
-﻿using Emmetienne.TOMLConfigManager.Models;
+﻿using Emmetienne.TOMLConfigManager.Logger;
+using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 using Emmetienne.TOMLConfigManager.Utilities;
-using Microsoft.Xrm.Sdk;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
     internal class UpsertOperationStrategy : IOperationStrategy
     {
+        private readonly ILogger logger;
+
+        public UpsertOperationStrategy(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public void ExecuteOperation(OperationExecutionContext operationExecutionContext)
         {
             var sourceD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>("Source.RecordRepository");
@@ -14,11 +21,15 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             var operation = operationExecutionContext.OperationExecutable;
 
+
+
             var sourceRecords = sourceD365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, true);
 
             if (sourceRecords.Entities.Count > 1)
             {
-                operation.ErrorMessage = ("Multiple matching records found in source environment");
+                var errorMessage = "Multiple matching records found in source environment";
+                operation.ErrorMessage = errorMessage;
+                logger.LogError(errorMessage);
                 return;
             }
 
@@ -26,7 +37,9 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             if (targetRecords.Entities.Count > 1)
             {
-                operation.ErrorMessage = ("Multiple matching records found in target environment");
+                var errorMessage = "Multiple matching records found in target environment";
+                operation.ErrorMessage = errorMessage;
+                logger.LogError(errorMessage);
                 return;
             }
 
@@ -35,14 +48,23 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             if (targetRecords.Entities.Count == 0)
             {
-                targetD365RecordRepository.CreateRecord(recordToUpsert);
+                logger.LogDebug("No matching record found in target environment. Creating new record.");
+
+                var createdRecordId = targetD365RecordRepository.CreateRecord(recordToUpsert);
+
+                logger.LogDebug($"Record created in table {operation.Table} with Id {createdRecordId}.");
             }
             else
             {
+                logger.LogDebug("Matching record found in target environment. Updating existing record.");
+
                 recordToUpsert.Id = targetRecords[0].Id;
                 recordToUpsert[$"{operation.Table}id"] = targetRecords[0].Id;
 
                 targetD365RecordRepository.UpdateRecord(recordToUpsert);
+
+                logger.LogDebug($"Record in table {operation.Table} with ID {recordToUpsert.Id} updated successfully in target environment");
+
             }
         }
     }

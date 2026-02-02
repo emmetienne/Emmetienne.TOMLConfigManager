@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Models;
+﻿using Emmetienne.TOMLConfigManager.Logger;
+using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Registries;
 using Emmetienne.TOMLConfigManager.Repositories;
 using Emmetienne.TOMLConfigManager.Services.Strategies;
@@ -10,13 +11,15 @@ namespace Emmetienne.TOMLConfigManager.Services
 {
     public class TOMLConfigurationService
     {
-        private IOrganizationService sourceOrganizationService;
-        private IOrganizationService targetOrganizationService;
+        private readonly IOrganizationService sourceOrganizationService;
+        private readonly IOrganizationService targetOrganizationService;
+        private readonly ILogger logger;
 
-        public TOMLConfigurationService(IOrganizationService sourceOrganizationService, IOrganizationService targetOrganizationService)
+        public TOMLConfigurationService(IOrganizationService sourceOrganizationService, IOrganizationService targetOrganizationService, ILogger logger)
         {
             this.sourceOrganizationService = sourceOrganizationService;
             this.targetOrganizationService = targetOrganizationService;
+            this.logger = logger;
         }
 
         public List<TOMLOperationExecutable> PortConfiguration(List<TOMLOperationExecutable> TOMLOperationExecutableList)
@@ -28,13 +31,19 @@ namespace Emmetienne.TOMLConfigManager.Services
             repositoryRegistry.Add("Source.EntityMetadataRepository", new EntityMetadataRepository(sourceOrganizationService));
             repositoryRegistry.Add("Target.EntityMetadataRepository", new EntityMetadataRepository(targetOrganizationService));
 
+            logger.LogInfo("Starting TOML operations execution...");
+
             foreach (var operation in TOMLOperationExecutableList)
             {
-                var strategy = OperationStrategyFactory.GetStrategy(operation.Type);
+                var strategy = OperationStrategyFactory.GetStrategy(operation.Type, logger);
 
                 if (strategy != null)
                 {
+                    logger.LogDebug($"Executing {operation.Type} Operation for TOML");
+                    logger.LogInfo(operation.ToString());
+
                     var operationExecutionContext = new OperationExecutionContext(operation, repositoryRegistry);
+
                     try
                     {
                         strategy.ExecuteOperation(operationExecutionContext);
@@ -42,6 +51,7 @@ namespace Emmetienne.TOMLConfigManager.Services
                     catch (Exception ex)
                     {
                         operation.ErrorMessage = ex.Message;
+                        logger.LogError($"Error executing operation: {ex.Message}");
                         continue;
                     }
                 }

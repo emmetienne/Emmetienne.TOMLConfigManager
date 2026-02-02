@@ -1,4 +1,5 @@
 ﻿using Emmetienne.TOMLConfigManager.Converters;
+using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
@@ -8,6 +9,13 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
     internal class ReplaceOperationStrategy : IOperationStrategy
     {
+        private readonly ILogger logger;
+
+        public ReplaceOperationStrategy(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public void ExecuteOperation(OperationExecutionContext operationExecutionContext)
         {
             var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>("Target.RecordRepository");
@@ -18,13 +26,17 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             if (targetRecords.Entities.Count == 0)
             {
-                operation.ErrorMessage = ("No record to update found in target environment");
+                var errorMessage = "No record to update found in target environment";
+                logger.LogError(errorMessage);
+                operation.ErrorMessage = errorMessage;
                 return;
             }
 
             if (targetRecords.Entities.Count > 1)
             {
-                operation.ErrorMessage = ("Multiple matching records found in target environment");
+                var errorMessage = "Multiple matching records found in target environment";
+                logger.LogError(errorMessage);
+                operation.ErrorMessage = errorMessage;
                 return;
             }
 
@@ -38,11 +50,14 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
                 var fieldMetadata = MetadataManager.Instance.GetAttributeTypeCode(operation.Table, operation.Fields[i], targetEntityMetadataRepository);
 
-
                 recordToUpdate[operation.Fields[i]] = FieldValueConverter.Convert(operation.Values[i], fieldMetadata);
             }
 
+            logger.LogDebug($"Updating record in table {operation.Table} with Id {recordToUpdate.Id} in target environment");
+
             targetD365RecordRepository.UpdateRecord(recordToUpdate);
+
+            logger.LogDebug($"Record in table {operation.Table} with Id {recordToUpdate.Id} updated successfully in target environment");
         }
     }
 }

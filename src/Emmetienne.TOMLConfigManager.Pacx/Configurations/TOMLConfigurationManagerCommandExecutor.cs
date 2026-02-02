@@ -1,4 +1,6 @@
-﻿using Emmetienne.TOMLConfigManager.Models;
+﻿using Emmetienne.TOMLConfigManager.Logger;
+using Emmetienne.TOMLConfigManager.Models;
+using Emmetienne.TOMLConfigManager.Pacx.Logger;
 using Emmetienne.TOMLConfigManager.Services;
 using Greg.Xrm.Command;
 using Greg.Xrm.Command.Services.Connection;
@@ -9,44 +11,54 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
 {
     public class TOMLConfigurationManagerCommandExecutor : ICommandExecutor<TOMLConfigurationManagerCommand>
     {
-        private readonly IOutput output;
+        private readonly ILogger pacxTOMLLogger;
         private readonly IOrganizationServiceRepository organizationServiceRepository;
 
         public TOMLConfigurationManagerCommandExecutor(IOutput output, IOrganizationServiceRepository organizationServiceRepository)
         {
-            this.output = output;
+            this.pacxTOMLLogger = new PacxTOMLogger(output);
             this.organizationServiceRepository = organizationServiceRepository;
         }
 
         public async Task<CommandResult> ExecuteAsync(TOMLConfigurationManagerCommand command, CancellationToken cancellationToken)
         {
-            //read from the parameter "path" the toml file
-            var tomlContent = File.ReadAllText(command.TOMLConfigFilePath);
+            var tomlContent = string.Empty;
 
-            output.WriteLine("TOML file content:");
-            output.WriteLine(tomlContent);
+            if (string.IsNullOrWhiteSpace(command.TOMLConfigFilePath) && string.IsNullOrWhiteSpace(command.TOMLString))
+                return CommandResult.Fail("No TOML operations provided. Exiting...");
 
-            output.WriteLine("Parsing TOML file...");
+            if (!string.IsNullOrWhiteSpace(command.TOMLConfigFilePath) && !string.IsNullOrWhiteSpace(command.TOMLString))
+                return CommandResult.Fail("Both TOML file and string has been provided, chose one or another. Exiting...");
+
+            if (!string.IsNullOrWhiteSpace(command.TOMLString))
+                tomlContent = command.TOMLString;
+            else
+                tomlContent = File.ReadAllText(command.TOMLConfigFilePath);
+
+            pacxTOMLLogger.LogDebug("Provided TOML content:");
+            pacxTOMLLogger.LogInfo(tomlContent);
+
+            pacxTOMLLogger.LogInfo("Parsing TOML file...");
             var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(tomlContent);
 
-            output.WriteLine("Connecting to source organization...");
+            pacxTOMLLogger.LogDebug($"Connecting to source ({command.SourceConnection}) organization...");
             var sourceService = await organizationServiceRepository.GetConnectionByName(command.SourceConnection);
 
-            output.WriteLine("Connecting to target organization...");
+            pacxTOMLLogger.LogDebug($"Connecting to target ({command.TargetConnection}) organization...");
             var targetService = await organizationServiceRepository.GetConnectionByName(command.TargetConnection);
 
             var TOMLParsingService = new TOMLParsingService();
 
-            var tomlOperationList = TOMLParsingService.ParseToTOMLExecutables(tomlContent);
+            var tomlOperationList = TOMLParsingService.ParseToTOMLExecutables(tomlContent, pacxTOMLLogger);
 
-            var tomlExecutionService = new TOMLConfigurationService(sourceService, targetService);
+            if (tomlOperationList == null || tomlOperationList.Count == 0)
+                return CommandResult.Fail("No TOML operations to execute. Exiting...");
+
+            var tomlExecutionService = new TOMLConfigurationService(sourceService, targetService, pacxTOMLLogger);
 
             var tomlExecuted = tomlExecutionService.PortConfiguration(tomlOperationList);
 
-            for (int i = 0; i < tomlExecuted.Count; i++)
-            {
-                output.WriteLine($"TOML #{i} {tomlExecuted[i].ErrorMessage}", tomlExecuted[i].Success ? ConsoleColor.Green : ConsoleColor.Red);
-            }
+            Console.ReadLine();
 
             return CommandResult.Success();
         }

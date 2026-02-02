@@ -242,10 +242,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\IXrmToolboxLoggingComponent.cs" />
+    <Compile Include="Components\XrmToolboxLoggingComponent.cs" />
+    <Compile Include="Controls\SplitContainerWithHandles.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\TOMLCardControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Eventbus\EventbusSingleton.cs" />
+    <Compile Include="Logger\XrmToolboxTOMLLogger.cs" />
+    <Compile Include="Logger\LogLevel.cs" />
+    <Compile Include="Logger\LogModel.cs" />
     <Compile Include="TOMLConfigurationManager.cs" />
     <Compile Include="TOMLConfigurationManagerControl.cs">
       <SubType>UserControl</SubType>
@@ -265,9 +273,7 @@
       <DependentUpon>TOMLConfigurationManagerControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

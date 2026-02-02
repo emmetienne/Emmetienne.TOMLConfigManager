@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Tomlyn;
 
 namespace Emmetienne.TOMLConfigManager.Models
 {
@@ -21,5 +22,10 @@ namespace Emmetienne.TOMLConfigManager.Models
 
         public string ErrorMessage { get; set; }
         public bool Success => string.IsNullOrWhiteSpace(ErrorMessage);
+
+        public override string ToString()
+        {
+            return Toml.FromModel(this);
+        }
     }
 }
