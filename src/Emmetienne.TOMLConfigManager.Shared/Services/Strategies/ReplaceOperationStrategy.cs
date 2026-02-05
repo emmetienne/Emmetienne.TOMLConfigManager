@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Converters;
+﻿using Emmetienne.TOMLConfigManager.Constants;
+using Emmetienne.TOMLConfigManager.Converters;
 using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
@@ -46,7 +47,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             // gestione cache
             for (int i = 0; i < operation.Fields.Count; i++)
             {
-                var targetEntityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>("Target.EntityMetadataRepository");
+                var targetEntityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
 
                 var fieldMetadata = MetadataManager.Instance.GetAttributeTypeCode(operation.Table, operation.Fields[i], targetEntityMetadataRepository);
 

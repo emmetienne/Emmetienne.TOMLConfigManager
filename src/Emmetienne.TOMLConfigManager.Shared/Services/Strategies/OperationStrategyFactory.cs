@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Logger;
+﻿using Emmetienne.TOMLConfigManager.Constants;
+using Emmetienne.TOMLConfigManager.Logger;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
@@ -8,13 +9,13 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
         {
             switch (operationType.ToLower())
             {
-                case "upsert":
+                case OperationTypes.upsert:
                     return new UpsertOperationStrategy(logger);
-                case "replace":
+                case OperationTypes.replace:
                     return new ReplaceOperationStrategy(logger);
-                case "delete":
+                case OperationTypes.delete:
                     return new DeleteOperationStrategy(logger);
-                case "create":
+                case OperationTypes.create:
                     return new CreateOperationStrategy(logger);
                 default:
                     return null;

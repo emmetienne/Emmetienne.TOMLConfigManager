@@ -1,11 +1,7 @@
 ﻿using Emmetienne.TOMLConfigManager.Eventbus;
 using Emmetienne.TOMLConfigManager.Logger;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Emmetienne.TOMLConfigManager.Components
@@ -23,7 +19,7 @@ namespace Emmetienne.TOMLConfigManager.Components
 
         public void ClearLogs()
         {
-            throw new System.NotImplementedException();
+            this.loggingComponentDataGridView.Rows.Clear();
         }
 
         public void WriteLog(LogModel log)

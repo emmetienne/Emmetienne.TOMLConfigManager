@@ -9,6 +9,8 @@
     <Import_RootNamespace>Emmetienne.TOMLConfigManager</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\OperationTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\RepositoryRegistryKeys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FieldValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger\ILogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Managers\MetadataManager.cs" />

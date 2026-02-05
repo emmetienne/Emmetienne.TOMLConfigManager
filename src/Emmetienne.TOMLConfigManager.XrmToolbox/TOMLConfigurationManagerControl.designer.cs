@@ -36,8 +36,8 @@ namespace Emmetienne.TOMLConfigManager
             this.openFileToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.secondEnvToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.mainSplitContainer = new SplitContainerWithHandles();
-            this.controlsSplitContainer = new SplitContainerWithHandles();
+            this.mainSplitContainer = new Emmetienne.TOMLConfigManager.Controls.SplitContainerWithHandles();
+            this.controlsSplitContainer = new Emmetienne.TOMLConfigManager.Controls.SplitContainerWithHandles();
             this.tomlTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.parseButton = new System.Windows.Forms.Button();
             this.tomlRichTextBox = new System.Windows.Forms.RichTextBox();
@@ -83,7 +83,6 @@ namespace Emmetienne.TOMLConfigManager
             this.openFileToolStripButton.Name = "openFileToolStripButton";
             this.openFileToolStripButton.Size = new System.Drawing.Size(75, 22);
             this.openFileToolStripButton.Text = "Open TOML";
-            this.openFileToolStripButton.Click += new System.EventHandler(this.openTomlToolStripButton_Click);
             // 
             // tssSeparator1
             // 
@@ -96,8 +95,8 @@ namespace Emmetienne.TOMLConfigManager
             this.secondEnvToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("secondEnvToolStripButton.Image")));
             this.secondEnvToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.secondEnvToolStripButton.Name = "secondEnvToolStripButton";
-            this.secondEnvToolStripButton.Size = new System.Drawing.Size(107, 22);
-            this.secondEnvToolStripButton.Text = "Second Env: None";
+            this.secondEnvToolStripButton.Size = new System.Drawing.Size(177, 22);
+            this.secondEnvToolStripButton.Text = "Connect to Target Environment";
             this.secondEnvToolStripButton.Click += new System.EventHandler(this.secondEnvToolStripButton_Click);
             // 
             // mainSplitContainer
@@ -106,7 +105,6 @@ namespace Emmetienne.TOMLConfigManager
             this.mainSplitContainer.Location = new System.Drawing.Point(0, 25);
             this.mainSplitContainer.Name = "mainSplitContainer";
             this.mainSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.mainSplitContainer.TabStop = false;
             // 
             // mainSplitContainer.Panel1
             // 
@@ -118,13 +116,13 @@ namespace Emmetienne.TOMLConfigManager
             this.mainSplitContainer.Size = new System.Drawing.Size(1035, 668);
             this.mainSplitContainer.SplitterDistance = 497;
             this.mainSplitContainer.TabIndex = 5;
+            this.mainSplitContainer.TabStop = false;
             // 
             // controlsSplitContainer
             // 
             this.controlsSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlsSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.controlsSplitContainer.Name = "controlsSplitContainer";
-            this.controlsSplitContainer.TabStop = false;
             // 
             // controlsSplitContainer.Panel1
             // 
@@ -137,6 +135,7 @@ namespace Emmetienne.TOMLConfigManager
             this.controlsSplitContainer.Size = new System.Drawing.Size(1035, 497);
             this.controlsSplitContainer.SplitterDistance = 223;
             this.controlsSplitContainer.TabIndex = 0;
+            this.controlsSplitContainer.TabStop = false;
             // 
             // tomlTableLayoutPanel
             // 
@@ -162,7 +161,6 @@ namespace Emmetienne.TOMLConfigManager
             this.parseButton.TabIndex = 0;
             this.parseButton.Text = "Parse";
             this.parseButton.UseVisualStyleBackColor = true;
-            this.parseButton.Click += new System.EventHandler(this.parseButton_Click);
             // 
             // tomlRichTextBox
             // 
@@ -207,7 +205,6 @@ namespace Emmetienne.TOMLConfigManager
             this.executeOperationButton.TabIndex = 1;
             this.executeOperationButton.Text = "Execute operations";
             this.executeOperationButton.UseVisualStyleBackColor = true;
-            this.executeOperationButton.Click += new System.EventHandler(this.executeOperationButton_Click);
             // 
             // logGroupBox
             // 
@@ -228,6 +225,7 @@ namespace Emmetienne.TOMLConfigManager
             this.logDataGridView.BackgroundColor = System.Drawing.SystemColors.Window;
             this.logDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.logDataGridView.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            this.logDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.logDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.logDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.timestamp,
@@ -237,6 +235,8 @@ namespace Emmetienne.TOMLConfigManager
             this.logDataGridView.Location = new System.Drawing.Point(3, 16);
             this.logDataGridView.Name = "logDataGridView";
             this.logDataGridView.ReadOnly = true;
+            this.logDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.logDataGridView.RowHeadersVisible = false;
             this.logDataGridView.Size = new System.Drawing.Size(1029, 148);
             this.logDataGridView.TabIndex = 0;
             // 
@@ -299,8 +299,6 @@ namespace Emmetienne.TOMLConfigManager
         private System.Windows.Forms.ToolStrip toolStripMenu;
         private System.Windows.Forms.ToolStripButton openFileToolStripButton;
         private System.Windows.Forms.ToolStripSeparator tssSeparator1;
-        private System.Windows.Forms.SplitContainer mainSplitContainer;
-        private System.Windows.Forms.SplitContainer controlsSplitContainer;
         private System.Windows.Forms.RichTextBox tomlRichTextBox;
         private System.Windows.Forms.Button parseButton;
         private System.Windows.Forms.TableLayoutPanel tomlTableLayoutPanel;
@@ -313,5 +311,7 @@ namespace Emmetienne.TOMLConfigManager
         private System.Windows.Forms.DataGridViewTextBoxColumn timestamp;
         private System.Windows.Forms.DataGridViewTextBoxColumn message;
         private System.Windows.Forms.DataGridViewTextBoxColumn Severity;
+        private SplitContainerWithHandles mainSplitContainer;
+        private SplitContainerWithHandles controlsSplitContainer;
     }
 }

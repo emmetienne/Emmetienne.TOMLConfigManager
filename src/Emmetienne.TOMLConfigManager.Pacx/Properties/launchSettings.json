@@ -6,7 +6,7 @@
     "PACX": {
       "commandName": "Executable",
       "executablePath": "pacx",
-      "commandLineArgs": "configurations TOML --source D1 --target D10 --path \"C:\\Users\\marty\\Downloads\\test.toml\" --tool \"C:\\src\\Emmetienne.TOMLConfigManager\\src\\Emmetienne.TOMLConfigManager.Pacx\\bin\\Debug\\net8.0\\Emmetienne.TOMLConfigManager.Pacx.dll\""
+      "commandLineArgs": "configurations TOML --source D1 --target D16 --path \"C:\\Users\\marty\\Downloads\\toast_onlyupsert.toml\" --tool \"C:\\src\\Emmetienne.TOMLConfigManager\\src\\Emmetienne.TOMLConfigManager.Pacx\\bin\\Debug\\net8.0\\Emmetienne.TOMLConfigManager.Pacx.dll\""
     }
   }
 }

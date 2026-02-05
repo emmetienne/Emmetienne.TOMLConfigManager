@@ -56,9 +56,7 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
 
             var tomlExecutionService = new TOMLConfigurationService(sourceService, targetService, pacxTOMLLogger);
 
-            var tomlExecuted = tomlExecutionService.PortConfiguration(tomlOperationList);
-
-            Console.ReadLine();
+            var tomlExecuted = tomlExecutionService.PortConfigurations(tomlOperationList);
 
             return CommandResult.Success();
         }

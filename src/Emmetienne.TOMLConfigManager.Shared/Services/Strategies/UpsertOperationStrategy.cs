@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Logger;
+﻿using Emmetienne.TOMLConfigManager.Constants;
+using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 using Emmetienne.TOMLConfigManager.Utilities;
@@ -16,14 +17,22 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
         public void ExecuteOperation(OperationExecutionContext operationExecutionContext)
         {
-            var sourceD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>("Source.RecordRepository");
-            var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>("Target.RecordRepository");
+            var sourceD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.sourceRecordRepository);
+            var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
 
             var operation = operationExecutionContext.OperationExecutable;
 
 
 
             var sourceRecords = sourceD365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, true);
+
+            if (sourceRecords.Entities.Count == 0)
+            {
+                var errorMessage = "No matching record found in source environment";
+                operation.ErrorMessage = errorMessage;
+                logger.LogError(errorMessage);
+                return;
+            }
 
             if (sourceRecords.Entities.Count > 1)
             {
@@ -33,7 +42,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                 return;
             }
 
-            var targetRecords = targetD365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, true);
+            var targetRecords = targetD365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, false);
 
             if (targetRecords.Entities.Count > 1)
             {

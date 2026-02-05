@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Logger;
+﻿using Emmetienne.TOMLConfigManager.Constants;
+using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 
@@ -15,7 +16,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
         public void ExecuteOperation(OperationExecutionContext operationExecutionContext)
         {
-            var d365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>("Target.RecordRepository");
+            var d365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
             var operation = operationExecutionContext.OperationExecutable;
 
             var record = d365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, false);

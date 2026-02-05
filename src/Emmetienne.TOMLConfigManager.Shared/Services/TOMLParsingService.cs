@@ -4,6 +4,7 @@ using Emmetienne.TOMLConfigManager.Utilities;
 using System;
 using System.Collections.Generic;
 using Tomlyn;
+using Tomlyn.Syntax;
 
 namespace Emmetienne.TOMLConfigManager.Services
 {
@@ -11,11 +12,17 @@ namespace Emmetienne.TOMLConfigManager.Services
     {
         public List<TOMLOperationExecutable> ParseToTOMLExecutables(string TOMLcontent, ILogger logger)
         {
-            TOMLParsed TOMLOperationsDeserialized = null;
+            var TOMLOperationsDeserialized = new TOMLParsed();
+
             try
             {
-
                 TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(TOMLcontent);
+                //if (!Toml.TryToModel<TOMLParsed>(TOMLcontent, out TOMLOperationsDeserialized, out DiagnosticsBag diagnostics))
+                //{
+                //    var errorMessage = "Failed to deserialize the provided TOML content, the provided TOML is not formally valid";
+                //    logger.LogError(errorMessage);
+                //    return null;
+                //}
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Logger;
+﻿using Emmetienne.TOMLConfigManager.Constants;
+using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Registries;
 using Emmetienne.TOMLConfigManager.Repositories;
@@ -22,14 +23,14 @@ namespace Emmetienne.TOMLConfigManager.Services
             this.logger = logger;
         }
 
-        public List<TOMLOperationExecutable> PortConfiguration(List<TOMLOperationExecutable> TOMLOperationExecutableList)
+        public List<TOMLOperationExecutable> PortConfigurations(List<TOMLOperationExecutable> TOMLOperationExecutableList)
         {
             var repositoryRegistry = new RepositoryRegistry();
 
-            repositoryRegistry.Add("Source.RecordRepository", new D365RecordRepository(sourceOrganizationService));
-            repositoryRegistry.Add("Target.RecordRepository", new D365RecordRepository(targetOrganizationService));
-            repositoryRegistry.Add("Source.EntityMetadataRepository", new EntityMetadataRepository(sourceOrganizationService));
-            repositoryRegistry.Add("Target.EntityMetadataRepository", new EntityMetadataRepository(targetOrganizationService));
+            repositoryRegistry.Add(RepositoryRegistryKeys.sourceRecordRepository, new D365RecordRepository(sourceOrganizationService));
+            repositoryRegistry.Add(RepositoryRegistryKeys.targetRecordRepository, new D365RecordRepository(targetOrganizationService));
+            repositoryRegistry.Add(RepositoryRegistryKeys.sourceEntityMetadataRepository, new EntityMetadataRepository(sourceOrganizationService));
+            repositoryRegistry.Add(RepositoryRegistryKeys.targetEntityMetadataRepository, new EntityMetadataRepository(targetOrganizationService));
 
             logger.LogInfo("Starting TOML operations execution...");
 

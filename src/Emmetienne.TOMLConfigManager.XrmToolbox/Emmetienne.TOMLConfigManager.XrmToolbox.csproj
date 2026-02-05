@@ -243,6 +243,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\IXrmToolboxLoggingComponent.cs" />
+    <Compile Include="Components\OpenTOMLButtonComponent.cs" />
+    <Compile Include="Components\PanelCardComponent.cs" />
+    <Compile Include="Components\ExecuteTOMLOperationsButtonComponent.cs" />
+    <Compile Include="Components\ParseTOMLButtonComponent.cs" />
+    <Compile Include="Components\TOMLRichTextBoxComponent.cs" />
     <Compile Include="Components\XrmToolboxLoggingComponent.cs" />
     <Compile Include="Controls\SplitContainerWithHandles.cs">
       <SubType>Component</SubType>
@@ -254,6 +259,10 @@
     <Compile Include="Logger\XrmToolboxTOMLLogger.cs" />
     <Compile Include="Logger\LogLevel.cs" />
     <Compile Include="Logger\LogModel.cs" />
+    <Compile Include="Services\OpenTOMLService.cs" />
+    <Compile Include="Services\XRMToolboxTOMLConfigurationsExecuteService.cs" />
+    <Compile Include="Services\XRMToolboxTOMLParsingService.cs" />
+    <Compile Include="Stores\OperationsStoreSingleton.cs" />
     <Compile Include="TOMLConfigurationManager.cs" />
     <Compile Include="TOMLConfigurationManagerControl.cs">
       <SubType>UserControl</SubType>

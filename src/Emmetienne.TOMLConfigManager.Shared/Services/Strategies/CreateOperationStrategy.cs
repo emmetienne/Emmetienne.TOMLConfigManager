@@ -1,4 +1,5 @@
-﻿using Emmetienne.TOMLConfigManager.Converters;
+﻿using Emmetienne.TOMLConfigManager.Constants;
+using Emmetienne.TOMLConfigManager.Converters;
 using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
@@ -16,7 +17,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
         }
         public void ExecuteOperation(OperationExecutionContext operationExecutionContext)
         {
-            var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>("Target.RecordRepository");
+            var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
 
             var operation = operationExecutionContext.OperationExecutable;
 

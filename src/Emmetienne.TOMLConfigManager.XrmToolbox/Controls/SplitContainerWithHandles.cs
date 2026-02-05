@@ -8,6 +8,9 @@ namespace Emmetienne.TOMLConfigManager.Controls
         public SplitContainerWithHandles()
         {
             this.SetStyle(ControlStyles.UserPaint, true);
+            this.MouseDown += OnMouseDown;
+            this.MouseMove += OnMouseMove;
+            this.MouseUp += OnMouseUp;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -67,6 +70,49 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 }
             }
 
+        }
+
+        private void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            // This disables the normal move behavior
+            ((SplitContainer)sender).IsSplitterFixed = true;
+        }
+
+        private void OnMouseUp(object sender, MouseEventArgs e)
+        {
+            // This allows the splitter to be moved normally again
+            ((SplitContainer)sender).IsSplitterFixed = false;
+        }
+
+        //assign this to the SplitContainer's MouseMove event
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (!((SplitContainer)sender).IsSplitterFixed)
+                return;
+
+            if (!e.Button.Equals(MouseButtons.Left))
+            {
+                ((SplitContainer)sender).IsSplitterFixed = false;
+                return;
+            }
+            if (((SplitContainer)sender).Orientation.Equals(Orientation.Vertical))
+            {
+
+                if (e.X > 0 && e.X < ((SplitContainer)sender).Width)
+                {
+                    ((SplitContainer)sender).SplitterDistance = e.X;
+                    ((SplitContainer)sender).Refresh();
+                }
+            }
+            else
+            {
+                if (e.Y > 0 && e.Y < ((SplitContainer)sender).Height)
+                {
+                    ((SplitContainer)sender).SplitterDistance = e.Y;
+                    ((SplitContainer)sender).Refresh();
+                }
+            }
         }
     }
 }
