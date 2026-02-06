@@ -19,6 +19,8 @@ namespace Emmetienne.TOMLConfigManager.Services
         {
             try
             {
+                EventbusSingleton.Instance.disableUiElements?.Invoke(true);
+
                 var openFileDialog = new OpenFileDialog();
 
                 openFileDialog.Filter = "TOML files (*.toml)|*.toml|All files (*.*)|*.*";
@@ -40,6 +42,10 @@ namespace Emmetienne.TOMLConfigManager.Services
             catch (Exception ex)
             {
                 logger.LogError($"Error loading TOML file: {ex.Message}");
+            }
+            finally
+            {
+                EventbusSingleton.Instance.disableUiElements?.Invoke(false);
             }
         }
     }

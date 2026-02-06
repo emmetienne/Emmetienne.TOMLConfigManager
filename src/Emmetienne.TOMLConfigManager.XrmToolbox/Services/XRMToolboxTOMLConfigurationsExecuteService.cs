@@ -30,7 +30,7 @@ namespace Emmetienne.TOMLConfigManager.Services
                 return;
             }
 
-            if (multipleConnectionsPluginControl.AdditionalConnectionDetails == null && multipleConnectionsPluginControl.AdditionalConnectionDetails.Count == 0)
+            if (multipleConnectionsPluginControl.AdditionalConnectionDetails == null || multipleConnectionsPluginControl.AdditionalConnectionDetails.Count == 0)
             {
                 MessageBox.Show("Please select a target environment first");
                 return;
@@ -43,6 +43,8 @@ namespace Emmetienne.TOMLConfigManager.Services
                 Message = "Executing TOML Operations",
                 Work = (worker, args) =>
                 {
+                    EventbusSingleton.Instance.disableUiElements?.Invoke(true);
+
                     var configurationService = new TOMLConfigurationService(multipleConnectionsPluginControl.Service, multipleConnectionsPluginControl.AdditionalConnectionDetails[0].GetCrmServiceClient(), logger);
 
                     var TOMLOperationsExecutableSelected = new List<TOMLOperationExecutable>();
@@ -67,7 +69,10 @@ namespace Emmetienne.TOMLConfigManager.Services
                     if (args.Error != null)
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        EventbusSingleton.Instance.disableUiElements?.Invoke(false);
+                        return;
                     }
+
                     var TOMLOperationsExecutableSelected = args.Result as List<TOMLOperationExecutable>;
 
                     foreach (var control in selectedCards)
@@ -84,6 +89,8 @@ namespace Emmetienne.TOMLConfigManager.Services
                         else
                             control.SetKo(tomlOperationExecutableFound.ErrorMessage);
                     }
+
+                    EventbusSingleton.Instance.disableUiElements?.Invoke(false);
                 }
             });
         }

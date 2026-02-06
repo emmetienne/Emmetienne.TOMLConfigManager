@@ -19,6 +19,7 @@ namespace Emmetienne.TOMLConfigManager.Components
             EventbusSingleton.Instance.clearCards += ClearCards;
 
             EventbusSingleton.Instance.getSelectedCards = GetSelectedCards;
+            EventbusSingleton.Instance.disableUiElements += DisableControl;
         }
 
         public void AddCard(TOMLCardControl card)
@@ -64,6 +65,17 @@ namespace Emmetienne.TOMLConfigManager.Components
                 }
             }
             return selectedCards;
+        }
+
+        public void DisableControl(bool disable)
+        {
+            if (cardPanel.InvokeRequired)
+            {
+                cardPanel.Invoke(new Action(() => DisableControl(disable)));
+                return;
+            }
+
+            cardPanel.Enabled = !disable;
         }
     }
 }

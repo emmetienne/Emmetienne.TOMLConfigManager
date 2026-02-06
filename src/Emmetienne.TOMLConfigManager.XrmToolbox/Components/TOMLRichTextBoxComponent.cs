@@ -15,6 +15,7 @@ namespace Emmetienne.TOMLConfigManager.Components
 
             EventbusSingleton.Instance.setTOMLText += SetTOMLText;
             EventbusSingleton.Instance.getTOMLText = GetTOMLText;
+            EventbusSingleton.Instance.disableUiElements += DisableControl;
         }
 
         private void SetTOMLText(string tomlText)
@@ -35,6 +36,17 @@ namespace Emmetienne.TOMLConfigManager.Components
                 return (string)TOMLRichTextBox.Invoke(new Func<string>(() => TOMLRichTextBox.Text));
             }
             return TOMLRichTextBox.Text;
+        }
+
+        public void DisableControl(bool disable)
+        {
+            if (TOMLRichTextBox.InvokeRequired)
+            {
+                TOMLRichTextBox.Invoke(new Action(() => DisableControl(disable)));
+                return;
+            }
+
+            TOMLRichTextBox.Enabled = !disable;
         }
     }
 }

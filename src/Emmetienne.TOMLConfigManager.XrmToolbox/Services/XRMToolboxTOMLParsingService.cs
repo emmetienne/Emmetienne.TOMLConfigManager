@@ -38,6 +38,8 @@ namespace Emmetienne.TOMLConfigManager.Services
                         return;
                     }
 
+                    EventbusSingleton.Instance.disableUiElements?.Invoke(true);
+
                     EventbusSingleton.Instance.clearCards?.Invoke();
 
                     var TOMLParsingService = new TOMLParsingService();
@@ -50,6 +52,7 @@ namespace Emmetienne.TOMLConfigManager.Services
                     {
                         MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         logger.LogError($"Error parsing TOML: {args.Error.Message}");
+                        EventbusSingleton.Instance.disableUiElements?.Invoke(false);
                         return;
                     }
 
@@ -90,6 +93,8 @@ namespace Emmetienne.TOMLConfigManager.Services
 
                         EventbusSingleton.Instance.addCard?.Invoke(card);
                     }
+
+                    EventbusSingleton.Instance.disableUiElements?.Invoke(false);
                 }
             });
         }

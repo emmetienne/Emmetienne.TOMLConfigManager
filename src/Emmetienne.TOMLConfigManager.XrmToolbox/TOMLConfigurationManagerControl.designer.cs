@@ -75,7 +75,6 @@ namespace Emmetienne.TOMLConfigManager
             this.toolStripMenu.Name = "toolStripMenu";
             this.toolStripMenu.Size = new System.Drawing.Size(1035, 25);
             this.toolStripMenu.TabIndex = 4;
-            this.toolStripMenu.Text = "toolStrip1";
             // 
             // openFileToolStripButton
             // 

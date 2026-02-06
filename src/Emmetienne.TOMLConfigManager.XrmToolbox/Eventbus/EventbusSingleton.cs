@@ -14,6 +14,8 @@ namespace Emmetienne.TOMLConfigManager.Eventbus
         public Action clearCards;
         public Func<List<TOMLCardControl>> getSelectedCards;
 
+        public Action<bool> disableUIElements;
+
         public Action initializeOperationStore;
         public Action<Guid,TOMLOperationExecutable> addToOperationStore;
         public Func<Guid, TOMLOperationExecutable> getOperationFromStore;

@@ -248,6 +248,7 @@
     <Compile Include="Components\ExecuteTOMLOperationsButtonComponent.cs" />
     <Compile Include="Components\ParseTOMLButtonComponent.cs" />
     <Compile Include="Components\TOMLRichTextBoxComponent.cs" />
+    <Compile Include="Components\ToolstripComponent.cs" />
     <Compile Include="Components\XrmToolboxLoggingComponent.cs" />
     <Compile Include="Controls\SplitContainerWithHandles.cs">
       <SubType>Component</SubType>

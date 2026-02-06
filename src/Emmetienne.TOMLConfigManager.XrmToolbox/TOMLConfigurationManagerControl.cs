@@ -20,6 +20,7 @@ namespace Emmetienne.TOMLConfigManager
         private readonly OpenTOMLButtonComponent openTOMLButtonComponent;
         private readonly ParseTOMLButtonComponent parseTOMLButtonComponent;
         private readonly ExecuteTOMLOperationsButtonComponent executeTOMLOperationsButtonComponent;
+        private readonly ToolstripComponent toolstripComponent;
 
 
         private readonly XRMToolboxTOMLParsingService xrmToolboxTOMLParsingService;
@@ -39,6 +40,8 @@ namespace Emmetienne.TOMLConfigManager
             openTOMLButtonComponent = new OpenTOMLButtonComponent(this.openFileToolStripButton);
             parseTOMLButtonComponent = new ParseTOMLButtonComponent(this.parseButton);
             executeTOMLOperationsButtonComponent = new ExecuteTOMLOperationsButtonComponent(this.executeOperationButton);
+            toolstripComponent = new ToolstripComponent(this.toolStripMenu);
+
 
             openTOMLService = new OpenTOMLService(logger);
             xrmToolboxTOMLParsingService = new XRMToolboxTOMLParsingService(this, logger);
