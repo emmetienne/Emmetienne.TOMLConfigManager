@@ -163,6 +163,7 @@ namespace Emmetienne.TOMLConfigManager
             // 
             // tomlRichTextBox
             // 
+            this.tomlRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tomlRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tomlRichTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tomlRichTextBox.Location = new System.Drawing.Point(3, 3);
@@ -236,6 +237,7 @@ namespace Emmetienne.TOMLConfigManager
             this.logDataGridView.ReadOnly = true;
             this.logDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.logDataGridView.RowHeadersVisible = false;
+            this.logDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.logDataGridView.Size = new System.Drawing.Size(1029, 148);
             this.logDataGridView.TabIndex = 0;
             // 
