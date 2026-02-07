@@ -250,7 +250,7 @@
     <Compile Include="Components\TOMLRichTextBoxComponent.cs" />
     <Compile Include="Components\ToolstripComponent.cs" />
     <Compile Include="Components\XrmToolboxLoggingComponent.cs" />
-    <Compile Include="Controls\SplitContainerWithHandles.cs">
+    <Compile Include="Controls\SplitContainerWithHandlesControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\TOMLCardControl.cs">

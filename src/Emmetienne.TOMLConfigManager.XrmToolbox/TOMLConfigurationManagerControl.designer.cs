@@ -36,8 +36,8 @@ namespace Emmetienne.TOMLConfigManager
             this.openFileToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.secondEnvToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.mainSplitContainer = new Emmetienne.TOMLConfigManager.Controls.SplitContainerWithHandles();
-            this.controlsSplitContainer = new Emmetienne.TOMLConfigManager.Controls.SplitContainerWithHandles();
+            this.mainSplitContainer = new Emmetienne.TOMLConfigManager.Controls.SplitContainerWithHandlesControl();
+            this.controlsSplitContainer = new Emmetienne.TOMLConfigManager.Controls.SplitContainerWithHandlesControl();
             this.tomlTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.parseButton = new System.Windows.Forms.Button();
             this.tomlRichTextBox = new System.Windows.Forms.RichTextBox();
@@ -310,7 +310,7 @@ namespace Emmetienne.TOMLConfigManager
         private System.Windows.Forms.DataGridViewTextBoxColumn timestamp;
         private System.Windows.Forms.DataGridViewTextBoxColumn message;
         private System.Windows.Forms.DataGridViewTextBoxColumn Severity;
-        private SplitContainerWithHandles mainSplitContainer;
-        private SplitContainerWithHandles controlsSplitContainer;
+        private SplitContainerWithHandlesControl mainSplitContainer;
+        private SplitContainerWithHandlesControl controlsSplitContainer;
     }
 }

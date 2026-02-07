@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace Emmetienne.TOMLConfigManager.Controls
 {
-    internal class SplitContainerWithHandles : SplitContainer
+    internal class SplitContainerWithHandlesControl : SplitContainer
     {
-        public SplitContainerWithHandles()
+        public SplitContainerWithHandlesControl()
         {
             this.SetStyle(ControlStyles.UserPaint, true);
             this.MouseDown += OnMouseDown;
