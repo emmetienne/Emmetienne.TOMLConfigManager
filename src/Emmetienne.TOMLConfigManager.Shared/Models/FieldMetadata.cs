@@ -1,10 +1,11 @@
-﻿using Microsoft.Xrm.Sdk.Metadata;
+﻿using System;
 
 namespace Emmetienne.TOMLConfigManager.Models
 {
     public class FieldMetadata
     {
-        public AttributeTypeCode? AttributeTypeCode { get; set; }
+        public Type AttributeType { get; set; }
         public string EntityReferenceTarget { get; set; }
+        public bool IsDateOnly { get; set; }
     }
 }

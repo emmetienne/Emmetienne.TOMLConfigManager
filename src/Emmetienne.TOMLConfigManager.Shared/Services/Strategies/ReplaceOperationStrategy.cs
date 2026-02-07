@@ -44,12 +44,20 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             var recordToUpdate = new Entity(operation.Table);
             recordToUpdate.Id = targetRecords.Entities[0].Id;
 
-            // gestione cache
+
             for (int i = 0; i < operation.Fields.Count; i++)
             {
                 var targetEntityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
 
                 var fieldMetadata = MetadataManager.Instance.GetAttributeTypeCode(operation.Table, operation.Fields[i], targetEntityMetadataRepository);
+
+                if (fieldMetadata == null)
+                {
+                    var errorMessage = $"Metadata not found for {operation.Fields[i]} in table {operation.Table}";
+                    logger.LogError(errorMessage);
+                    operation.ErrorMessage = errorMessage;
+                    return;
+                }
 
                 recordToUpdate[operation.Fields[i]] = FieldValueConverter.Convert(operation.Values[i], fieldMetadata);
             }

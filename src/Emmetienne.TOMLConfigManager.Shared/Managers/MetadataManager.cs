@@ -27,17 +27,20 @@ namespace Emmetienne.TOMLConfigManager.Managers
                 if (response == null || response.AttributeMetadata.AttributeType == null)
                     return null;
 
-                // Ensure the inner dictionary exists before assignment
+
                 if (!metadataCache.ContainsKey(entityLogicalName))
                 {
                     metadataCache[entityLogicalName] = new Dictionary<string, FieldMetadata>();
                 }
 
                 var fieldMetadata = new FieldMetadata();
-                fieldMetadata.AttributeTypeCode = response.AttributeMetadata.AttributeType.Value;
+                fieldMetadata.AttributeType = response.AttributeMetadata.GetType();
 
-                if (response.AttributeMetadata.AttributeType == AttributeTypeCode.Lookup)
+                if (response.AttributeMetadata.GetType() == typeof(LookupAttributeMetadata))
                     fieldMetadata.EntityReferenceTarget = ((LookupAttributeMetadata)response.AttributeMetadata).Targets[0];
+
+                if (response.AttributeMetadata.GetType() == typeof(DateTimeAttributeMetadata))
+                    fieldMetadata.IsDateOnly = ((DateTimeAttributeMetadata)response.AttributeMetadata).DateTimeBehavior == DateTimeBehavior.DateOnly;
 
                 metadataCache[entityLogicalName][fieldLogicalName] = fieldMetadata;
 
