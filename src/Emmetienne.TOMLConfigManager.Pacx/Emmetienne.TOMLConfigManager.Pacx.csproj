@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.2026.2.1</Version>
+    <Version>1.2026.2.2</Version>
 	<EnableDynamicLoading>true</EnableDynamicLoading>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<Title>TOML Config Manager</Title>
@@ -33,6 +33,7 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Include="THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="docs/" />
   </ItemGroup>
 
   <ItemGroup>
