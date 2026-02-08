@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Emmetienne.TOMLConfigManager")]
 [assembly: AssemblyDescription("An interactive tool for executing and managing TOML-based Dataverse configuration operations.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Martino Spreafico")]
 [assembly: AssemblyProduct("Emmetienne.TOMLConfigManager")]
 [assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.2026.2.0")]
-[assembly: AssemblyFileVersion("1.2026.2.0")]
+[assembly: AssemblyVersion("1.2026.2.2")]
+[assembly: AssemblyFileVersion("1.2026.2.2")]

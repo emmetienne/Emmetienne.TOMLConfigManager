@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>1.2026.2.0</Version>
+    <Version>1.2026.2.1</Version>
 	<EnableDynamicLoading>true</EnableDynamicLoading>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<Title>TOML Config Manager</Title>
@@ -17,7 +17,7 @@
 	<PackageProjectUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</PackageProjectUrl>
 	<PackageIcon>icon_128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</RepositoryUrl>
-	<PackageReleaseNotes>- 1.2026.2.0 - First release</PackageReleaseNotes>
+	<PackageReleaseNotes>- 1.2026.2.1 - First release</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
