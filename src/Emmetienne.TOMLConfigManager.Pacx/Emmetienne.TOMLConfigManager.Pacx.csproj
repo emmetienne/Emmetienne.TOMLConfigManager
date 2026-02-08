@@ -33,15 +33,18 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Greg.Xrm.Command.Interfaces" Version="1.1.1" />
     <PackageReference Include="Tomlyn" Version="0.20.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <Import Project="..\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems" Label="Shared" />

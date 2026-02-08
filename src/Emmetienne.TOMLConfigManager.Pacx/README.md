@@ -85,7 +85,7 @@ Both `source` and `target` must refer to connections configured in PACX / Greg.X
 
 ```bash
 
-pacx toml-config-manager --path "./config/config.toml" --source "DEV" --target "TEST"
+pacx configurations TOML --source DEV --target TEST --path "C:\test.toml"
 
 ``` 
 
@@ -93,13 +93,7 @@ pacx toml-config-manager --path "./config/config.toml" --source "DEV" --target "
 
 ```bash
 
-pacx toml-config-manager \
-
---TOMLstring "[[operation]]\ntype=\"delete\"\ntable=\"account\"\nmatch_on=[\"accountnumber\"]\nrows=[[\"ACC001\"]]\n" \
-
---source "DEV" \
-
---target "TEST"
+pacx configurations TOML --source DEV --target TEST --TOMLstring "[[operation]]\ntype=\"delete\"\ntable=\"account\"\nmatch_on=[\"accountnumber\"]\nrows=[[\"ACC001\"]]\n"
 
 ``` 
 
