@@ -1,4 +1,5 @@
-﻿# TOML Config Manager – PACX Host  
+﻿
+# TOML Config Manager – PACX Host  
 
 This project integrates [**TOML Config Manager engine**](https://github.com/emmetienne/Emmetienne.TOMLConfigManager) with [**PACX / Greg.Xrm.Command**](https://github.com/neronotte/Greg.Xrm.Command), enabling CLI and non-interactive and CI/CD-friendly execution of declarative configuration operations for Microsoft Dataverse / Dynamics 365.  
 
@@ -142,13 +143,10 @@ Use this host when you need:
 For interactive execution with operation selection and retry capabilities, use the XrmToolBox host instead. 
   
 
-## Related Documentation
+## Related Documentation  
 
-  
-
-* Core Engine Documentation → `../README.md` (adjust path if needed)
-
-* XrmToolBox Host → `../<xrmtoolbox-path>/README.md` (adjust path if needed)
+* [Core Engine Documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/README.md) 
+* [XrmToolBox Host](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.XrmToolbox/README.md) 
 ## Contributing & Feedback
 
 [](https://github.com/emmetienne/Emmetienne.TOMLConfigManager?tab=readme-ov-file#contributing--feedback)
