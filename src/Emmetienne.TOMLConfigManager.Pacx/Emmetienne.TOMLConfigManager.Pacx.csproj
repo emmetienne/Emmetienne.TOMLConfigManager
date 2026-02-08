@@ -4,8 +4,40 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>1.2026.2.0</Version>
 	<EnableDynamicLoading>true</EnableDynamicLoading>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Title>TOML Config Manager</Title>
+	<Copyright>2026</Copyright>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+	<ApplicationIcon>icon_128.ico</ApplicationIcon>
+	<Authors>Martino Spreafico</Authors>
+	<Description>A CLI-based execution host that integrates TOML Config Manager into PACX for manual and CI/CD scenarios.</Description>
+	<PackageProjectUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</PackageProjectUrl>
+	<PackageIcon>icon_128.png</PackageIcon>
+	<RepositoryUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</RepositoryUrl>
+	<PackageReleaseNotes>- 1.2026.2.0 - First release</PackageReleaseNotes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icon_128.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\Icons\icon_128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Greg.Xrm.Command.Interfaces" Version="1.1.1" />

@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{B853417C-891B-4A0F-8B8F-CF5FB487C95E}"
+	ProjectSection(SolutionItems) = preProject
+		Icons\icon_128.ico = Icons\icon_128.ico
+		Icons\icon_128.png = Icons\icon_128.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +45,7 @@ Global
 		{685A2BE1-2CCC-4309-AFA5-DD69959A2AEF} = {BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}
 		{687F6AFB-437F-4B18-8310-8AE12CCB7B42} = {BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}
 		{48DFE65D-5450-4167-AEB3-71D2EA45C84B} = {BFFF0AE8-4694-41BC-BCF0-644819CE5CE2}
+		{B853417C-891B-4A0F-8B8F-CF5FB487C95E} = {3944D91C-372D-4599-B9DD-7AECA131024D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B03F7AE-176A-4BE8-95D1-ACC78B0B7296}

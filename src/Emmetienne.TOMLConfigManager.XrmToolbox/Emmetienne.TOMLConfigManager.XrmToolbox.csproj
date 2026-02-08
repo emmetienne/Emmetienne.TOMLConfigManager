@@ -277,13 +277,16 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TOMLConfigurationManagerControl.resx">
       <DependentUpon>TOMLConfigurationManagerControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="LICENSE.txt" />
+  </ItemGroup>
   <Import Project="..\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
