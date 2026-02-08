@@ -128,3 +128,13 @@ Please open an issue in the repository to discuss improvements or report unexpec
 [](https://github.com/emmetienne/Emmetienne.TOMLConfigManager?tab=readme-ov-file#license)
 
 This project is licensed under the MIT License.
+
+## Credits
+
+This project relies on the excellent open-source library:
+
+- **Tomlyn** by Alexandre Mutel  
+  A .NET TOML parser licensed under BSD-2-Clause.  
+  https://github.com/xoofx/Tomlyn
+
+See [THIRD-PARTY-NOTICES.md](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.XrmToolbox/THIRD-PARTY-NOTICES.md) for full license details.

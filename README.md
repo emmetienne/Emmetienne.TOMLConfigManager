@@ -288,3 +288,13 @@ Please open an issue in the repository to discuss improvements or report unexpec
 ## License
 
 This project is licensed under the MIT License.
+
+## Credits
+
+This project relies on the excellent open-source library:
+
+- **Tomlyn** by Alexandre Mutel  
+  A .NET TOML parser licensed under BSD-2-Clause.  
+  https://github.com/xoofx/Tomlyn
+
+See [THIRD-PARTY-NOTICES.md](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/THIRD-PARTY-NOTICES.md) for full license details.
