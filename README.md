@@ -7,8 +7,8 @@ The goal of this project is to make configuration updates predictable, repeatabl
 The engine preserves execution order, validates operations against Dataverse metadata, and provides deterministic behavior across environments.
 
 It is available through dedicated host integrations for:
-- [XrmToolbox](https://www.xrmtoolbox.com/) (interactive execution)
-- [PACX/Greg.Xrm.Command](https://github.com/neronotte/Greg.Xrm.Command) (CI/CD scenarios)
+- [XrmToolbox](https://www.xrmtoolbox.com/) (interactive execution) → [Go to documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.XrmToolbox/README.md)
+- [PACX/Greg.Xrm.Command](https://github.com/neronotte/Greg.Xrm.Command) (CI/CD scenarios) → [Go to documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.Pacx/README.md)
 
 ## Why use TOML Config Manager?
 
