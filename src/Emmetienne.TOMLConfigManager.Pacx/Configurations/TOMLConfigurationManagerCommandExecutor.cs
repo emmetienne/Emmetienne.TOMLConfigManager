@@ -22,43 +22,51 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
 
         public async Task<CommandResult> ExecuteAsync(TOMLConfigurationManagerCommand command, CancellationToken cancellationToken)
         {
-            var tomlContent = string.Empty;
+            try
+            {
+                var tomlContent = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(command.TOMLConfigFilePath) && string.IsNullOrWhiteSpace(command.TOMLString))
-                return CommandResult.Fail("No TOML operations provided. Exiting...");
+                if (string.IsNullOrWhiteSpace(command.TOMLConfigFilePath) && string.IsNullOrWhiteSpace(command.TOMLString))
+                    return CommandResult.Fail("No TOML operations provided. Exiting...");
 
-            if (!string.IsNullOrWhiteSpace(command.TOMLConfigFilePath) && !string.IsNullOrWhiteSpace(command.TOMLString))
-                return CommandResult.Fail("Both TOML file and string has been provided, chose one or another. Exiting...");
+                if (!string.IsNullOrWhiteSpace(command.TOMLConfigFilePath) && !string.IsNullOrWhiteSpace(command.TOMLString))
+                    return CommandResult.Fail("Both TOML file and string has been provided, chose one or another. Exiting...");
 
-            if (!string.IsNullOrWhiteSpace(command.TOMLString))
-                tomlContent = command.TOMLString;
-            else
-                tomlContent = File.ReadAllText(command.TOMLConfigFilePath);
+                if (!string.IsNullOrWhiteSpace(command.TOMLString))
+                    tomlContent = command.TOMLString.Replace("\\n",Environment.NewLine);
+                else
+                    tomlContent = File.ReadAllText(command.TOMLConfigFilePath);
 
-            pacxTOMLLogger.LogDebug("Provided TOML content:");
-            pacxTOMLLogger.LogInfo(tomlContent);
+                pacxTOMLLogger.LogDebug("Provided TOML content:");
+                pacxTOMLLogger.LogInfo(tomlContent);
 
-            pacxTOMLLogger.LogInfo("Parsing TOML file...");
-            var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(tomlContent);
+                pacxTOMLLogger.LogInfo("Parsing TOML file...");
+                var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(tomlContent);
 
-            pacxTOMLLogger.LogDebug($"Connecting to source ({command.SourceConnection}) organization...");
-            var sourceService = await organizationServiceRepository.GetConnectionByName(command.SourceConnection);
+                pacxTOMLLogger.LogDebug($"Connecting to source ({command.SourceConnection}) organization...");
+                var sourceService = await organizationServiceRepository.GetConnectionByName(command.SourceConnection);
 
-            pacxTOMLLogger.LogDebug($"Connecting to target ({command.TargetConnection}) organization...");
-            var targetService = await organizationServiceRepository.GetConnectionByName(command.TargetConnection);
+                pacxTOMLLogger.LogDebug($"Connecting to target ({command.TargetConnection}) organization...");
+                var targetService = await organizationServiceRepository.GetConnectionByName(command.TargetConnection);
 
-            var TOMLParsingService = new TOMLParsingService();
+                var TOMLParsingService = new TOMLParsingService();
 
-            var tomlOperationList = TOMLParsingService.ParseToTOMLExecutables(tomlContent, pacxTOMLLogger);
+                var tomlOperationList = TOMLParsingService.ParseToTOMLExecutables(tomlContent, pacxTOMLLogger);
 
-            if (tomlOperationList == null || tomlOperationList.Count == 0)
-                return CommandResult.Fail("No TOML operations to execute. Exiting...");
+                if (tomlOperationList == null || tomlOperationList.Count == 0)
+                    return CommandResult.Fail("No TOML operations to execute. Exiting...");
 
-            var tomlExecutionService = new TOMLConfigurationService(sourceService, targetService, pacxTOMLLogger);
+                var tomlExecutionService = new TOMLConfigurationService(sourceService, targetService, pacxTOMLLogger);
 
-            var tomlExecuted = tomlExecutionService.PortConfigurations(tomlOperationList);
+                var tomlExecuted = tomlExecutionService.PortConfigurations(tomlOperationList);
 
-            return CommandResult.Success();
+                return CommandResult.Success();
+            }
+            catch (Exception ex)
+            {
+                pacxTOMLLogger.LogError($"An error occurred while executing the TOML configuration: {ex.Message}");
+                return CommandResult.Fail($"An error occurred while executing the TOML configuration: {ex.Message}");         
+            }
         }
     }
 }
