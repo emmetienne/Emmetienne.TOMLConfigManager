@@ -3,6 +3,7 @@ using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Emmetienne.TOMLConfigManager.Eventbus
 {
@@ -28,5 +29,18 @@ namespace Emmetienne.TOMLConfigManager.Eventbus
         public Action executeTOMLOperations;
 
         public Action<LogModel> writeLog;
+
+        public void Reset()
+        {
+            var fields = GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var field in fields)
+            {
+                if (typeof(Delegate).IsAssignableFrom(field.FieldType))
+                {
+                    field.SetValue(this, null);
+                }
+            }
+        }
     }
 }

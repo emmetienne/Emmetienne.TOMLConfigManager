@@ -1,4 +1,5 @@
 ﻿using Emmetienne.TOMLConfigManager.Controls;
+using Emmetienne.TOMLConfigManager.Eventbus;
 using System.Collections.Specialized;
 
 namespace Emmetienne.TOMLConfigManager
@@ -16,6 +17,8 @@ namespace Emmetienne.TOMLConfigManager
         /// <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
         protected override void Dispose(bool disposing)
         {
+            EventbusSingleton.Instance.Reset();
+
             if (disposing && (components != null))
             {
                 components.Dispose();
