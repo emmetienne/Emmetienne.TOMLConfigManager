@@ -32,6 +32,11 @@ namespace Emmetienne.TOMLConfigManager.Services
             repositoryRegistry.Add(RepositoryRegistryKeys.sourceEntityMetadataRepository, new EntityMetadataRepository(sourceOrganizationService));
             repositoryRegistry.Add(RepositoryRegistryKeys.targetEntityMetadataRepository, new EntityMetadataRepository(targetOrganizationService));
 
+            if (TOMLOperationExecutableList == null || TOMLOperationExecutableList.Count == 0)
+            {
+                logger.LogDebug("No TOML Operations to execute");
+            }
+
             logger.LogInfo("Starting TOML operations execution...");
 
             foreach (var operation in TOMLOperationExecutableList)
@@ -55,6 +60,13 @@ namespace Emmetienne.TOMLConfigManager.Services
                         logger.LogError($"Error executing operation: {ex.Message}");
                         continue;
                     }
+                }
+                else
+                {
+                    var errorMessage = $"No strategy found for operation of type {operation.Type}";
+                    operation.ErrorMessage = errorMessage;
+                    logger.LogError($"Error executing operation: {errorMessage}");
+                    continue;
                 }
             }
 

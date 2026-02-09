@@ -50,8 +50,8 @@ namespace Emmetienne.TOMLConfigManager.Services
                 {
                     if (args.Error != null)
                     {
-                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        logger.LogError($"Error parsing TOML: {args.Error.Message}");
+                        MessageBox.Show(args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        logger.LogError(args.Error.StackTrace);
                         EventbusSingleton.Instance.disableUiElements?.Invoke(false);
                         return;
                     }

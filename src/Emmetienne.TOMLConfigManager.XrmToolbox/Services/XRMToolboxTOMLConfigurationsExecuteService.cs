@@ -60,6 +60,15 @@ namespace Emmetienne.TOMLConfigManager.Services
                         TOMLOperationsExecutableSelected.Add(selectedTOMLOperationSelected);
                     }
 
+                    if (TOMLOperationsExecutableSelected.Count == 0)
+                    {
+                        var errorMessage = "No TOML Operations to execute";
+                        logger.LogError(errorMessage);
+                        MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        return;
+                    }
+
                     configurationService.PortConfigurations(TOMLOperationsExecutableSelected);
 
                     args.Result = TOMLOperationsExecutableSelected;
@@ -68,7 +77,8 @@ namespace Emmetienne.TOMLConfigManager.Services
                 {
                     if (args.Error != null)
                     {
-                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(args.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        logger.LogError(args.Error.StackTrace);
                         EventbusSingleton.Instance.disableUiElements?.Invoke(false);
                         return;
                     }
