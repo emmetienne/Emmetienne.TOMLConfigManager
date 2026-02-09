@@ -99,7 +99,7 @@ namespace Emmetienne.TOMLConfigManager
             this.secondEnvToolStripButton.Name = "secondEnvToolStripButton";
             this.secondEnvToolStripButton.Size = new System.Drawing.Size(177, 22);
             this.secondEnvToolStripButton.Text = "Connect to Target Environment";
-            this.secondEnvToolStripButton.Click += new System.EventHandler(this.secondEnvToolStripButton_Click);
+            this.secondEnvToolStripButton.Click += new System.EventHandler(this.OnSecondEnvironmentButtonClick);
             // 
             // mainSplitContainer
             // 
@@ -291,12 +291,6 @@ namespace Emmetienne.TOMLConfigManager
             this.ResumeLayout(false);
             this.PerformLayout();
 
-        }
-
-        protected override void ConnectionDetailsUpdated(NotifyCollectionChangedEventArgs e)
-        {
-            // non mi ricordo cosa fa sto coso
-            return;
         }
 
         #endregion

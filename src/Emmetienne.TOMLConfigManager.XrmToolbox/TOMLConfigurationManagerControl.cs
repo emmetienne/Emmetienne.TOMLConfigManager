@@ -1,9 +1,12 @@
 ﻿using Emmetienne.TOMLConfigManager.Components;
+using Emmetienne.TOMLConfigManager.Eventbus;
 using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Services;
 using McTools.Xrm.Connection;
 using Microsoft.Xrm.Sdk;
 using System;
+using System.Collections.Specialized;
+using System.Windows.Forms;
 using XrmToolBox.Extensibility;
 
 namespace Emmetienne.TOMLConfigManager
@@ -51,7 +54,7 @@ namespace Emmetienne.TOMLConfigManager
         private void MyPluginControl_Load(object sender, EventArgs e)
         {
             ShowInfoNotification("Visit my GitHub", new Uri("https://github.com/emmetienne"));
-        }   
+        }
 
         /// <summary>
         /// This event occurs when the plugin is closed
@@ -60,7 +63,7 @@ namespace Emmetienne.TOMLConfigManager
         /// <param name="e"></param>
         private void MyPluginControl_OnCloseTool(object sender, EventArgs e)
         {
-        
+
         }
 
         /// <summary>
@@ -71,36 +74,60 @@ namespace Emmetienne.TOMLConfigManager
         /// </summary>
         public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
         {
-            if (Service == newService)
+            if (actionName.Equals("AdditionalOrganization", StringComparison.OrdinalIgnoreCase) && newService != null)
+            {
+                base.UpdateConnection(newService, detail, actionName, parameter);
+                return;
+            }
+
+            if (newService == null || newService == Service)
                 return;
 
             base.UpdateConnection(newService, detail, actionName, parameter);
 
-            if (actionName.Equals("AdditionalOrganization", StringComparison.OrdinalIgnoreCase))
-                return;
+
+            logger.LogWarning($"Source environment connection has changed to: {this.ConnectionDetail.WebApplicationUrl}");
         }
 
-        private void secondEnvToolStripButton_Click(object sender, EventArgs e)
+        private void OnSecondEnvironmentButtonClick(object sender, EventArgs e)
         {
+            if (this.Service == null)
+            {
+                MessageBox.Show("Please connect to a source environment first.", "Connection Required", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             try
             {
                 AddAdditionalOrganization();
-
-                if (this.AdditionalConnectionDetails.Count == 0)
-                {
-                    this.secondEnvToolStripButton.Text = "Connect to Target Environment";
-                    return;
-                }
-
-                if (this.AdditionalConnectionDetails != null && this.AdditionalConnectionDetails.Count > 1)
-                    this.RemoveAdditionalOrganization(this.AdditionalConnectionDetails[0]);
-
-                this.secondEnvToolStripButton.Text = $"Target {this.AdditionalConnectionDetails[0].ConnectionName}";
             }
             catch (Exception ex)
             {
-                logger.LogError($"Cannot connect on second environment: {ex.Message}");
+                logger.LogError($"An error occurred while connecting to the target environment: {ex.Message}");
+                EventbusSingleton.Instance.disableUiElements?.Invoke(false);
             }
+        }
+
+        protected override void ConnectionDetailsUpdated(NotifyCollectionChangedEventArgs e)
+        {
+            EventbusSingleton.Instance.disableUiElements?.Invoke(true);
+
+            if (this.AdditionalConnectionDetails.Count == 0)
+            {
+                EventbusSingleton.Instance.disableUiElements?.Invoke(false);
+                this.secondEnvToolStripButton.Text = "Connect to Target Environment";
+                return;
+            }
+
+            if (this.AdditionalConnectionDetails != null && this.AdditionalConnectionDetails.Count > 1)
+                this.RemoveAdditionalOrganization(this.AdditionalConnectionDetails[0]);
+
+            this.secondEnvToolStripButton.Text = $"Target {this.AdditionalConnectionDetails[0].ConnectionName}";
+            logger.LogWarning($"Target environment connection has changed to: {this.AdditionalConnectionDetails[0].WebApplicationUrl}");
+
+
+            EventbusSingleton.Instance.disableUiElements?.Invoke(false);
         }
     }
 }
