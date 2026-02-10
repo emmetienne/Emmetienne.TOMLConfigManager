@@ -78,7 +78,7 @@ namespace Emmetienne.TOMLConfigManager.Repositories
 
             using (var uploadFileStream = new MemoryStream(fileBytes))
             {
-                int blockSize = 4 * 1024 * 1024; 
+                int blockSize = 4 * 1024 * 1024;
 
                 byte[] buffer = new byte[blockSize];
                 int bytesRead = 0;
@@ -121,6 +121,16 @@ namespace Emmetienne.TOMLConfigManager.Repositories
             var commitFileBlocksUploadResponse = (CommitFileBlocksUploadResponse)service.Execute(commitFileBlocksUploadRequest);
 
             return commitFileBlocksUploadResponse.FileId;
+        }
+
+        public void DeleteFile(Guid fileId)
+        {
+            var deleteFileRequest = new DeleteFileRequest()
+            {
+                FileId = fileId
+            };
+
+            service.Execute(deleteFileRequest);
         }
     }
 }
