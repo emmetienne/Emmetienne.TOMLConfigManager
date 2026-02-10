@@ -17,7 +17,10 @@
 	<PackageProjectUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</PackageProjectUrl>
 	<PackageIcon>icon_128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</RepositoryUrl>
-	<PackageReleaseNotes>- 1.2026.2.1 - First release</PackageReleaseNotes>
+	<PackageReleaseNotes>
+    - 1.2026.2.10 - Added for upsert operation the ability to port file and image columns
+    - 1.2026.2.1  - First release
+  </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
