@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace Emmetienne.TOMLConfigManager.Repositories
 {
@@ -22,6 +23,18 @@ namespace Emmetienne.TOMLConfigManager.Repositories
             };
 
             return (RetrieveAttributeResponse)service.Execute(retrieveAttributeRequest);
+        }
+
+        public RetrieveEntityResponse GetEntityMetadata(string entityLogicalName)
+        {
+            var retrieveEntityRequest = new RetrieveEntityRequest
+            {
+                EntityFilters = EntityFilters.Attributes,
+                LogicalName = entityLogicalName,
+                RetrieveAsIfPublished = true
+            };
+
+            return (RetrieveEntityResponse)service.Execute(retrieveEntityRequest);
         }
     }
 }

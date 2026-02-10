@@ -31,6 +31,8 @@ namespace Emmetienne.TOMLConfigManager.Services
             repositoryRegistry.Add(RepositoryRegistryKeys.targetRecordRepository, new D365RecordRepository(targetOrganizationService));
             repositoryRegistry.Add(RepositoryRegistryKeys.sourceEntityMetadataRepository, new EntityMetadataRepository(sourceOrganizationService));
             repositoryRegistry.Add(RepositoryRegistryKeys.targetEntityMetadataRepository, new EntityMetadataRepository(targetOrganizationService));
+            repositoryRegistry.Add(RepositoryRegistryKeys.sourceFileRepository, new D365FileRepository(sourceOrganizationService));
+            repositoryRegistry.Add(RepositoryRegistryKeys.targetFileRepository, new D365FileRepository(targetOrganizationService));
 
             if (TOMLOperationExecutableList == null || TOMLOperationExecutableList.Count == 0)
             {
