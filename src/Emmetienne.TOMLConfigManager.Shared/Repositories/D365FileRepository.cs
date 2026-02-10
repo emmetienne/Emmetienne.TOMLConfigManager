@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Emmetienne.TOMLConfigManager.Repositories
 {
-    internal class D365FileRepository
+    public class D365FileRepository
     {
         private readonly IOrganizationService service;
 
