@@ -95,9 +95,10 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                 if (tmpFieldMetadata != typeof(FileAttributeMetadata) && tmpFieldMetadata != typeof(ImageAttributeMetadata))
                     continue;
 
-                var fieldIdLogicalName = $"{fieldKey}id";
+                var fieldIdLogicalName = fieldKey;
 
-
+                if (tmpFieldMetadata == typeof(ImageAttributeMetadata))
+                    fieldIdLogicalName = $"{fieldKey}id";
 
                 // Handle creation or replace of file or image field value in target environment
                 if (sourceRecords[0].Attributes.ContainsKey(fieldIdLogicalName))
@@ -123,7 +124,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                     }
                     catch (Exception ex)
                     {
-                        var warningMessage = $"Error while deleting file or image for field {fieldKey} on record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}:{Environment.NewLine}{ex.Message}";
+                        var warningMessage = $"Error while uploading file or image for field {fieldKey} on record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}:{Environment.NewLine}{ex.Message}";
                         logger.LogWarning(warningMessage);
                         warningMessageList.Add(warningMessage);
                     }
