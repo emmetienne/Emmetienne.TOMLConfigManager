@@ -55,7 +55,9 @@ namespace Emmetienne.TOMLConfigManager.Services
                             continue;
 
                         var selectedTOMLOperationSelected = OperationsStoreSingleton.Instance.GetOperationExecutable(control.OperationId);
+                       
                         selectedTOMLOperationSelected.ErrorMessage = string.Empty;
+                        selectedTOMLOperationSelected.WarningMessage = string.Empty;
 
                         TOMLOperationsExecutableSelected.Add(selectedTOMLOperationSelected);
                     }
@@ -95,9 +97,18 @@ namespace Emmetienne.TOMLConfigManager.Services
                             continue;
 
                         if (tomlOperationExecutableFound.Success)
+                        {
                             control.SetOk();
-                        else
+                            continue;
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(tomlOperationExecutableFound.ErrorMessage))
+                        {
                             control.SetKo(tomlOperationExecutableFound.ErrorMessage);
+                            continue;
+                        }
+
+                        control.SetWarning(tomlOperationExecutableFound.WarningMessage);
                     }
 
                     EventbusSingleton.Instance.disableUiElements?.Invoke(false);

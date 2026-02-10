@@ -7,6 +7,7 @@ using Emmetienne.TOMLConfigManager.Utilities;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using System;
+using System.Collections.Generic;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
@@ -85,6 +86,8 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             var sourceFileAttributeRepository = operationExecutionContext.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.sourceFileRepository);
             var targetFileAttributeRepository = operationExecutionContext.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.targetFileRepository);
 
+            var warningMessageList = new List<string>();
+
             foreach (var fieldKey in allEntityFiledsMetadata.Keys)
             {
                 var tmpFieldMetadata = allEntityFiledsMetadata[fieldKey].AttributeType;
@@ -93,6 +96,8 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                     continue;
 
                 var fieldIdLogicalName = $"{fieldKey}id";
+
+
 
                 // Handle creation or replace of file or image field value in target environment
                 if (sourceRecords[0].Attributes.ContainsKey(fieldIdLogicalName))
@@ -118,9 +123,9 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                     }
                     catch (Exception ex)
                     {
-                        var warningMessage = $"Error while deleting file or image to record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}";
+                        var warningMessage = $"Error while deleting file or image for field {fieldKey} on record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}:{Environment.NewLine}{ex.Message}";
                         logger.LogWarning(warningMessage);
-                        operation.WarningMessage = warningMessage;
+                        warningMessageList.Add(warningMessage);
                     }
                 }
                 else
@@ -149,6 +154,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                             logger.LogDebug($"No file found on the record in target environment for field {queryField}, skipping delete operation.");
                             continue;
                         }
+
                         if (tmpFieldMetadata != typeof(ImageAttributeMetadata))
                         {
                             targetFileAttributeRepository.DeleteFile(Guid.Parse(result[fieldIdLogicalName].ToString()));
@@ -163,12 +169,14 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                     }
                     catch (Exception ex)
                     {
-                        var warningMessage = $"Error while deleting file or image to record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}";
+                        var warningMessage = $"Error while deleting file or image for field {fieldKey} on record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}:{Environment.NewLine}{ex.Message}";
                         logger.LogWarning(warningMessage);
-                        operation.WarningMessage = warningMessage;
+                        warningMessageList.Add(warningMessage);
                     }
                 }
             }
+
+            operation.WarningMessage = string.Join(Environment.NewLine, warningMessageList);
         }
     }
 }
