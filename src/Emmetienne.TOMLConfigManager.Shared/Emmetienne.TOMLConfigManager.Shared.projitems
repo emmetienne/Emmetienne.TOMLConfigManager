@@ -22,7 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\TOMLOperationRaw.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TOMLParsed.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Registries\RepositoryRegistry.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365FileAttributeRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365FileRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365RecordRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\EntityMetadataRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\CreateOperationStrategy.cs" />
