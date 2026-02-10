@@ -21,8 +21,8 @@ namespace Emmetienne.TOMLConfigManager.Models
         }
 
         public string ErrorMessage { get; set; }
-        public bool Success => string.IsNullOrWhiteSpace(ErrorMessage);
-
+        public string WarningMessage { get; set; }
+        public bool Success => string.IsNullOrWhiteSpace(ErrorMessage) && string.IsNullOrWhiteSpace(WarningMessage);
         public override string ToString()
         {
             return Toml.FromModel(this);

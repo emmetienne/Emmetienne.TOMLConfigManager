@@ -33,6 +33,14 @@ namespace Emmetienne.TOMLConfigManager.Controls
             public bool NeedsHorizontalScroll = false;
         }
 
+        private enum StatusType
+        {
+            None,
+            Ok,
+            Warning,
+            Error
+        }
+
         private readonly List<FieldEntry> fields = new List<FieldEntry>();
 
         public Guid OperationId { get; set; }
@@ -89,10 +97,10 @@ namespace Emmetienne.TOMLConfigManager.Controls
         private FieldEntry pendingCopyField = null;
         private Point mouseDownLocation;
 
-        private bool hasStatus = false;
-        private bool isOk = false;
-        private string errorMessage = null;
+        private StatusType currentStatus = StatusType.None;
+        private string statusMessage = null;
         private Color statusBackColor = Color.White;
+        private Color statusMessageColor = Color.DarkRed;
 
         private bool showCheckbox = true;
 
@@ -102,19 +110,19 @@ namespace Emmetienne.TOMLConfigManager.Controls
         private int horizontalScrollPauseCounter = 0;
         private bool horizontalScrollForward = true;
 
-        // Error message scrolling
-        private Rectangle errorMessageArea;
-        private int errorMessageTextHeight = 0;
-        private float errorMessageScrollOffset = 0;
-        private bool errorMessageIsHovered = false;
-        private bool errorMessageNeedsScroll = false;
+        // Status message scrolling
+        private Rectangle statusMessageArea;
+        private int statusMessageTextHeight = 0;
+        private float statusMessageScrollOffset = 0;
+        private bool statusMessageIsHovered = false;
+        private bool statusMessageNeedsScroll = false;
         private const float ErrorScrollSpeed = 1.0f;
         private const int ErrorScrollPauseAtEnd = 40;
         private int errorScrollPauseCounter = 0;
         private bool errorScrollForward = true;
 
-        // Error message click handling
-        private bool pendingErrorCopy = false;
+        // Status message click handling
+        private bool pendingStatusCopy = false;
 
         public TOMLCardControl()
         {
@@ -150,9 +158,8 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
         public void SetOk()
         {
-            hasStatus = true;
-            isOk = true;
-            errorMessage = null;
+            currentStatus = StatusType.Ok;
+            statusMessage = null;
             statusBackColor = Color.FromArgb(200, 230, 200);
 
             IsSelected = false;
@@ -162,16 +169,35 @@ namespace Emmetienne.TOMLConfigManager.Controls
             borderThickness = 1f;
             targetBorderThickness = 1f;
 
-            ResetErrorScroll();
+            ResetStatusScroll();
+            Invalidate();
+        }
+
+        public void SetWarning(string message)
+        {
+            currentStatus = StatusType.Warning;
+            statusMessage = message;
+            statusBackColor = Color.FromArgb(255, 250, 200);
+            statusMessageColor = Color.DarkGoldenrod;
+
+            IsSelected = false;
+            showCheckbox = true;
+
+            currentBorderColor = Color.DarkOrange;
+            targetBorderColor = Color.DarkOrange;
+            borderThickness = 2f;
+            targetBorderThickness = 2f;
+
+            RecalculateStatusMessageHeight();
             Invalidate();
         }
 
         public void SetKo(string message)
         {
-            hasStatus = true;
-            isOk = false;
-            errorMessage = message;
+            currentStatus = StatusType.Error;
+            statusMessage = message;
             statusBackColor = Color.FromArgb(255, 200, 200);
+            statusMessageColor = Color.DarkRed;
 
             IsSelected = false;
             showCheckbox = true;
@@ -181,50 +207,51 @@ namespace Emmetienne.TOMLConfigManager.Controls
             borderThickness = 2f;
             targetBorderThickness = 2f;
 
-            RecalculateErrorMessageHeight();
+            RecalculateStatusMessageHeight();
             Invalidate();
         }
 
         public void ResetStatus()
         {
-            hasStatus = false;
-            isOk = false;
-            errorMessage = null;
+            currentStatus = StatusType.None;
+            statusMessage = null;
             statusBackColor = Color.White;
             showCheckbox = true;
-            ResetErrorScroll();
+            ResetStatusScroll();
             Invalidate();
         }
 
-        private void ResetErrorScroll()
+        private void ResetStatusScroll()
         {
-            errorMessageScrollOffset = 0;
-            errorMessageIsHovered = false;
+            statusMessageScrollOffset = 0;
+            statusMessageIsHovered = false;
             errorScrollTimer.Stop();
             errorScrollForward = true;
             errorScrollPauseCounter = 0;
         }
 
-        private void RecalculateErrorMessageHeight()
+        private void RecalculateStatusMessageHeight()
         {
-            if (string.IsNullOrEmpty(errorMessage))
+            if (string.IsNullOrEmpty(statusMessage))
             {
-                errorMessageTextHeight = 0;
-                errorMessageNeedsScroll = false;
+                statusMessageTextHeight = 0;
+                statusMessageNeedsScroll = false;
                 return;
             }
 
             using (Graphics g = CreateGraphics())
             {
                 SizeF size = g.MeasureString(
-                    errorMessage,
+                    statusMessage,
                     errorFont,
                     new SizeF(Width - 20, float.MaxValue)
                 );
-                errorMessageTextHeight = (int)Math.Ceiling(size.Height);
-                errorMessageNeedsScroll = errorMessageTextHeight > ErrorMessageMaxHeight;
+                statusMessageTextHeight = (int)Math.Ceiling(size.Height);
+                statusMessageNeedsScroll = statusMessageTextHeight > ErrorMessageMaxHeight;
             }
         }
+
+        private bool HasStatusMessage => currentStatus == StatusType.Warning || currentStatus == StatusType.Error;
 
         private void UpdateCheckboxRect()
         {
@@ -238,8 +265,8 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
         private int GetAvailableContentHeight()
         {
-            int errorHeight = (hasStatus && !isOk && !string.IsNullOrEmpty(errorMessage)) ? ErrorMessageMaxHeight + 5 : 0;
-            return Height - CardTopPadding - CardBottomPadding - errorHeight;
+            int messageHeight = (HasStatusMessage && !string.IsNullOrEmpty(statusMessage)) ? ErrorMessageMaxHeight + 5 : 0;
+            return Height - CardTopPadding - CardBottomPadding - messageHeight;
         }
 
         public void AddField(string label, string value, FieldType type)
@@ -259,7 +286,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
             base.OnResize(e);
             UpdateCheckboxRect();
             RecalculateTextHeights();
-            RecalculateErrorMessageHeight();
+            RecalculateStatusMessageHeight();
         }
 
         private void RecalculateTextHeights()
@@ -302,17 +329,17 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 Invalidate();
             }
 
-            if (errorMessageIsHovered)
+            if (statusMessageIsHovered)
             {
-                errorMessageIsHovered = false;
-                errorMessageScrollOffset = 0;
+                statusMessageIsHovered = false;
+                statusMessageScrollOffset = 0;
                 errorScrollTimer.Stop();
                 errorScrollForward = true;
                 errorScrollPauseCounter = 0;
                 Invalidate();
             }
 
-            pendingErrorCopy = false;
+            pendingStatusCopy = false;
         }
 
         private void AnimateHorizontalScroll(object sender, EventArgs e)
@@ -358,13 +385,13 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
         private void AnimateErrorScroll(object sender, EventArgs e)
         {
-            if (!errorMessageIsHovered || !errorMessageNeedsScroll)
+            if (!statusMessageIsHovered || !statusMessageNeedsScroll)
             {
                 errorScrollTimer.Stop();
                 return;
             }
 
-            float maxScroll = Math.Max(0, errorMessageTextHeight - ErrorMessageMaxHeight);
+            float maxScroll = Math.Max(0, statusMessageTextHeight - ErrorMessageMaxHeight);
 
             if (errorScrollPauseCounter > 0)
             {
@@ -374,20 +401,20 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
             if (errorScrollForward)
             {
-                errorMessageScrollOffset += ErrorScrollSpeed;
-                if (errorMessageScrollOffset >= maxScroll)
+                statusMessageScrollOffset += ErrorScrollSpeed;
+                if (statusMessageScrollOffset >= maxScroll)
                 {
-                    errorMessageScrollOffset = maxScroll;
+                    statusMessageScrollOffset = maxScroll;
                     errorScrollForward = false;
                     errorScrollPauseCounter = ErrorScrollPauseAtEnd;
                 }
             }
             else
             {
-                errorMessageScrollOffset -= ErrorScrollSpeed;
-                if (errorMessageScrollOffset <= 0)
+                statusMessageScrollOffset -= ErrorScrollSpeed;
+                if (statusMessageScrollOffset <= 0)
                 {
-                    errorMessageScrollOffset = 0;
+                    statusMessageScrollOffset = 0;
                     errorScrollForward = true;
                     errorScrollPauseCounter = ErrorScrollPauseAtEnd;
                 }
@@ -400,12 +427,12 @@ namespace Emmetienne.TOMLConfigManager.Controls
         {
             base.OnMouseWheel(e);
 
-            // Check error message area for scrolling
-            if (errorMessageNeedsScroll && errorMessageArea.Contains(e.Location))
+            // Check status message area for scrolling
+            if (statusMessageNeedsScroll && statusMessageArea.Contains(e.Location))
             {
-                float maxScroll = Math.Max(0, errorMessageTextHeight - ErrorMessageMaxHeight);
-                errorMessageScrollOffset -= e.Delta / 4f;
-                errorMessageScrollOffset = Math.Max(0, Math.Min(errorMessageScrollOffset, maxScroll));
+                float maxScroll = Math.Max(0, statusMessageTextHeight - ErrorMessageMaxHeight);
+                statusMessageScrollOffset -= e.Delta / 4f;
+                statusMessageScrollOffset = Math.Max(0, Math.Min(statusMessageScrollOffset, maxScroll));
                 Invalidate();
                 return;
             }
@@ -431,7 +458,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
         private void OnMouseDownHandler(object sender, MouseEventArgs e)
         {
             pendingCopyField = null;
-            pendingErrorCopy = false;
+            pendingStatusCopy = false;
             mouseDownLocation = e.Location;
 
             Rectangle expandedCheckbox = checkboxRect;
@@ -445,10 +472,10 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 return;
             }
 
-            // Check if clicking on error message area
-            if (!errorMessageArea.IsEmpty && errorMessageArea.Contains(e.Location))
+            // Check if clicking on status message area
+            if (!statusMessageArea.IsEmpty && statusMessageArea.Contains(e.Location))
             {
-                pendingErrorCopy = true;
+                pendingStatusCopy = true;
                 return;
             }
 
@@ -491,12 +518,12 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
         private void OnMouseMoveHandler(object sender, MouseEventArgs e)
         {
-            // Handle error message hover
-            bool isOverError = errorMessageNeedsScroll && errorMessageArea.Contains(e.Location);
-            if (isOverError != errorMessageIsHovered)
+            // Handle status message hover
+            bool isOverStatus = statusMessageNeedsScroll && statusMessageArea.Contains(e.Location);
+            if (isOverStatus != statusMessageIsHovered)
             {
-                errorMessageIsHovered = isOverError;
-                if (errorMessageIsHovered)
+                statusMessageIsHovered = isOverStatus;
+                if (statusMessageIsHovered)
                 {
                     errorScrollForward = true;
                     errorScrollPauseCounter = ErrorScrollPauseAtEnd;
@@ -505,21 +532,21 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 else
                 {
                     errorScrollTimer.Stop();
-                    errorMessageScrollOffset = 0;
+                    statusMessageScrollOffset = 0;
                     errorScrollForward = true;
                     errorScrollPauseCounter = 0;
                 }
                 Invalidate();
             }
 
-            // Cancel error copy if mouse moves too much
-            if (pendingErrorCopy)
+            // Cancel status copy if mouse moves too much
+            if (pendingStatusCopy)
             {
                 int dx = Math.Abs(e.X - mouseDownLocation.X);
                 int dy = Math.Abs(e.Y - mouseDownLocation.Y);
                 if (dx > 5 || dy > 5)
                 {
-                    pendingErrorCopy = false;
+                    pendingStatusCopy = false;
                 }
             }
 
@@ -593,14 +620,14 @@ namespace Emmetienne.TOMLConfigManager.Controls
         {
             if (this.Capture) this.Capture = false;
 
-            // Handle error message copy
-            if (pendingErrorCopy)
+            // Handle status message copy
+            if (pendingStatusCopy)
             {
-                if (!errorMessageArea.IsEmpty && errorMessageArea.Contains(e.Location))
+                if (!statusMessageArea.IsEmpty && statusMessageArea.Contains(e.Location))
                 {
-                    CopyToClipboard(errorMessage);
+                    CopyToClipboard(statusMessage);
                 }
-                pendingErrorCopy = false;
+                pendingStatusCopy = false;
                 return;
             }
 
@@ -705,7 +732,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
 
             RectangleF rect = new RectangleF(1f, 1f, Width - 2f, Height - 2f);
 
-            Color bgColor = hasStatus ? statusBackColor : BackColor;
+            Color bgColor = currentStatus != StatusType.None ? statusBackColor : BackColor;
 
             using (GraphicsPath cardPath = CreateRoundedRectanglePath(rect, cornerRadius))
             {
@@ -727,30 +754,30 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 int y = CardTopPadding;
                 int maxY = Height - CardBottomPadding;
 
-                if (hasStatus && !isOk && !string.IsNullOrEmpty(errorMessage))
+                if (HasStatusMessage && !string.IsNullOrEmpty(statusMessage))
                 {
-                    errorMessageArea = new Rectangle(10, y, Width - 20, ErrorMessageMaxHeight);
+                    statusMessageArea = new Rectangle(10, y, Width - 20, ErrorMessageMaxHeight);
 
-                    using (SolidBrush errorBrush = new SolidBrush(Color.DarkRed))
+                    using (SolidBrush messageBrush = new SolidBrush(statusMessageColor))
                     {
-                        if (errorMessageNeedsScroll)
+                        if (statusMessageNeedsScroll)
                         {
-                            // Clip to error area
-                            Region errorClip = g.Clip;
-                            g.SetClip(Rectangle.Intersect(errorMessageArea, new Rectangle(0, 0, Width, Height)));
+                            // Clip to message area
+                            Region messageClip = g.Clip;
+                            g.SetClip(Rectangle.Intersect(statusMessageArea, new Rectangle(0, 0, Width, Height)));
 
-                            if (errorMessageIsHovered)
+                            if (statusMessageIsHovered)
                             {
                                 // Draw full text with scroll offset when hovering
                                 g.DrawString(
-                                    errorMessage,
+                                    statusMessage,
                                     errorFont,
-                                    errorBrush,
+                                    messageBrush,
                                     new RectangleF(
-                                        errorMessageArea.X,
-                                        errorMessageArea.Y - errorMessageScrollOffset,
-                                        errorMessageArea.Width,
-                                        errorMessageTextHeight + 10
+                                        statusMessageArea.X,
+                                        statusMessageArea.Y - statusMessageScrollOffset,
+                                        statusMessageArea.Width,
+                                        statusMessageTextHeight + 10
                                     )
                                 );
                             }
@@ -758,27 +785,27 @@ namespace Emmetienne.TOMLConfigManager.Controls
                             {
                                 // Draw full text (will be clipped)
                                 g.DrawString(
-                                    errorMessage,
+                                    statusMessage,
                                     errorFont,
-                                    errorBrush,
+                                    messageBrush,
                                     new RectangleF(
-                                        errorMessageArea.X,
-                                        errorMessageArea.Y,
-                                        errorMessageArea.Width,
-                                        errorMessageTextHeight + 10
+                                        statusMessageArea.X,
+                                        statusMessageArea.Y,
+                                        statusMessageArea.Width,
+                                        statusMessageTextHeight + 10
                                     )
                                 );
                             }
 
-                            g.SetClip(errorClip, CombineMode.Replace);
+                            g.SetClip(messageClip, CombineMode.Replace);
 
                             // Draw gradient fade at the bottom when not hovering and there's more content
-                            if (!errorMessageIsHovered)
+                            if (!statusMessageIsHovered)
                             {
                                 Rectangle fadeRect = new Rectangle(
-                                    errorMessageArea.X,
-                                    errorMessageArea.Bottom - ErrorFadeHeight,
-                                    errorMessageArea.Width,
+                                    statusMessageArea.X,
+                                    statusMessageArea.Bottom - ErrorFadeHeight,
+                                    statusMessageArea.Width,
                                     ErrorFadeHeight
                                 );
 
@@ -795,7 +822,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
                         else
                         {
                             // No scrolling needed, just draw normally
-                            g.DrawString(errorMessage, errorFont, errorBrush, errorMessageArea);
+                            g.DrawString(statusMessage, errorFont, messageBrush, statusMessageArea);
                         }
                     }
 
@@ -803,7 +830,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
                 }
                 else
                 {
-                    errorMessageArea = Rectangle.Empty;
+                    statusMessageArea = Rectangle.Empty;
                 }
 
                 foreach (var f in fields)

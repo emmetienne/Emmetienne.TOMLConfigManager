@@ -1,8 +1,13 @@
 ﻿using Emmetienne.TOMLConfigManager.Constants;
 using Emmetienne.TOMLConfigManager.Logger;
+using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 using Emmetienne.TOMLConfigManager.Utilities;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
+using System;
+using System.Collections.Generic;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
@@ -19,10 +24,9 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
         {
             var sourceD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.sourceRecordRepository);
             var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
+            var entityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
 
             var operation = operationExecutionContext.OperationExecutable;
-
-
 
             var sourceRecords = sourceD365RecordRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, true);
 
@@ -73,8 +77,106 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                 targetD365RecordRepository.UpdateRecord(recordToUpsert);
 
                 logger.LogDebug($"Record in table {operation.Table} with ID {recordToUpsert.Id} updated successfully in target environment");
-
             }
+
+            logger.LogDebug($"Retrieving entity metadata for table {operation.Table} to check if there are any file or image fields to update.");
+
+            var allEntityFiledsMetadata = MetadataManager.Instance.GetEntityFieldsMetadata(operation.Table, entityMetadataRepository);
+
+            var sourceFileAttributeRepository = operationExecutionContext.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.sourceFileRepository);
+            var targetFileAttributeRepository = operationExecutionContext.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.targetFileRepository);
+
+            var warningMessageList = new List<string>();
+
+            foreach (var fieldKey in allEntityFiledsMetadata.Keys)
+            {
+                var tmpFieldMetadata = allEntityFiledsMetadata[fieldKey].AttributeType;
+
+                if (tmpFieldMetadata != typeof(FileAttributeMetadata) && tmpFieldMetadata != typeof(ImageAttributeMetadata))
+                    continue;
+
+                var fieldIdLogicalName = $"{fieldKey}id";
+
+
+
+                // Handle creation or replace of file or image field value in target environment
+                if (sourceRecords[0].Attributes.ContainsKey(fieldIdLogicalName))
+                {
+                    try
+                    {
+                        logger.LogDebug($"Field {fieldKey} contains a file or image... downloading");
+
+                        var sourceFile = sourceFileAttributeRepository.DownloadFile(sourceRecords[0].ToEntityReference(), fieldKey);
+
+                        var fileName = string.Empty;
+
+                        if (tmpFieldMetadata == typeof(FileAttributeMetadata))
+                            fileName = sourceRecords[0].Attributes[$"{fieldKey}_name"].ToString();
+                        else
+                            fileName = Guid.NewGuid().ToString();
+
+                        logger.LogDebug($"Uploading file for field {fieldKey} to target environment and associating it to the record.");
+
+                        targetFileAttributeRepository.UploadFile(sourceFile, recordToUpsert.ToEntityReference(), fieldKey, fileName);
+
+                        continue;
+                    }
+                    catch (Exception ex)
+                    {
+                        var warningMessage = $"Error while deleting file or image for field {fieldKey} on record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}:{Environment.NewLine}{ex.Message}";
+                        logger.LogWarning(warningMessage);
+                        warningMessageList.Add(warningMessage);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        logger.LogDebug($"Field {fieldKey} contains a file or image but no value was found in the source record. Deleting any existing file in the target environment for this field.");
+
+                        var queryField = tmpFieldMetadata == typeof(ImageAttributeMetadata) ? fieldIdLogicalName : fieldKey;
+
+                        var columnSet = new string[] { queryField };
+
+                        var result = targetD365RecordRepository.GetRecorById(operation.Table, recordToUpsert.Id, columnSet, false);
+
+                        if (result == null)
+                        {
+                            var errorMessage = $"No record found in target environment with id {recordToUpsert.Id}, skipping delete operation.";
+                            logger.LogDebug(errorMessage);
+                            operation.ErrorMessage = errorMessage;
+                            continue;
+                        }
+
+                        if (!result.Attributes.ContainsKey(queryField) || result.Attributes[queryField] == null)
+                        {
+                            var errorMessage = $"No file found on the record in target environment for field {queryField}, skipping delete operation.";
+                            logger.LogDebug($"No file found on the record in target environment for field {queryField}, skipping delete operation.");
+                            continue;
+                        }
+
+                        if (tmpFieldMetadata != typeof(ImageAttributeMetadata))
+                        {
+                            targetFileAttributeRepository.DeleteFile(Guid.Parse(result[fieldIdLogicalName].ToString()));
+                            continue;
+                        }
+
+                        var recordToDeleteImage = new Entity(recordToUpsert.LogicalName);
+                        recordToDeleteImage.Id = recordToUpsert.Id;
+                        recordToDeleteImage[fieldKey] = null;
+
+                        targetD365RecordRepository.UpdateRecord(recordToDeleteImage);
+                    }
+                    catch (Exception ex)
+                    {
+                        var warningMessage = $"Error while deleting file or image for field {fieldKey} on record with id {recordToUpsert.Id} of table {recordToUpsert.LogicalName}:{Environment.NewLine}{ex.Message}";
+                        logger.LogWarning(warningMessage);
+                        warningMessageList.Add(warningMessage);
+                    }
+                }
+            }
+
+            operation.WarningMessage = string.Join(Environment.NewLine, warningMessageList);
         }
     }
 }

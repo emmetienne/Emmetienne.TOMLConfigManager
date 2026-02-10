@@ -50,5 +50,22 @@ namespace Emmetienne.TOMLConfigManager.Repositories
         {
             return organizationService.Create(record);
         }
+
+        public Entity GetRecorById(string entityLogicalName, Guid recordId, string[] fieldLogicalNames, bool retrieveAllFields)
+        {
+            var columnSet = new ColumnSet(false);
+
+            if (retrieveAllFields)
+            {
+                columnSet.AllColumns = true;
+                return organizationService.Retrieve(entityLogicalName, recordId, columnSet);
+            }
+
+            if (fieldLogicalNames == null || fieldLogicalNames.Length == 0)
+                throw new ArgumentException("No fields to be retrieved has been provided and retrieve all fields is false");
+
+            columnSet.AddColumns(fieldLogicalNames);
+            return organizationService.Retrieve(entityLogicalName, recordId, columnSet);
+        }
     }
 }
