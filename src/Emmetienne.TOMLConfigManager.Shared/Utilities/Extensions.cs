@@ -2,12 +2,77 @@
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Tomlyn;
 
 namespace Emmetienne.TOMLConfigManager.Utilities
 {
     public static class Extensions
     {
+        public static Entity DeepClone(this Entity entity)
+        {
+            if (entity == null)
+                return null;
+
+            var clone = new Entity(entity.LogicalName)
+            {
+                Id = entity.Id
+            };
+
+            foreach (var attribute in entity.Attributes)
+            {
+                clone[attribute.Key] = CloneAttributeValue(attribute.Value);
+            }
+
+            return clone;
+        }
+
+        private static object CloneAttributeValue(object value)
+        {
+            if (value == null)
+                return null;
+
+            switch (value)
+            {
+                case EntityReference entityRef:
+                    return new EntityReference(entityRef.LogicalName, entityRef.Id) { Name = entityRef.Name };
+
+                case OptionSetValue optionSet:
+                    return new OptionSetValue(optionSet.Value);
+
+                case Money money:
+                    return new Money(money.Value);
+
+                case AliasedValue aliased:
+                    return new AliasedValue(aliased.EntityLogicalName, aliased.AttributeLogicalName, CloneAttributeValue(aliased.Value));
+
+                case EntityCollection entityCollection:
+                    return new EntityCollection(entityCollection.Entities.Select(e => e.DeepClone()).ToList());
+
+                case OptionSetValueCollection optionSetCollection:
+                    return new OptionSetValueCollection(optionSetCollection.Select(o => new OptionSetValue(o.Value)).ToList());
+
+                case byte[] bytes:
+                    var bytesCopy = new byte[bytes.Length];
+                    Array.Copy(bytes, bytesCopy, bytes.Length);
+                    return bytesCopy;
+
+                case string _:
+                case int _:
+                case long _:
+                case decimal _:
+                case double _:
+                case float _:
+                case bool _:
+                case DateTime _:
+                case Guid _:
+                    return value;
+
+                default:
+                    return value;
+            }
+        }
+
         public static Entity RemoveOutOfTheBoxAndExcludedFields(this Entity record, List<string> excludeList)
         {
             var outOfTheBoxFields = new List<string>
@@ -59,5 +124,7 @@ namespace Emmetienne.TOMLConfigManager.Utilities
 
             return executable;
         }
+
+
     }
 }

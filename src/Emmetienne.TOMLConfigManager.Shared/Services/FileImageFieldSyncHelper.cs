@@ -70,6 +70,8 @@ namespace Emmetienne.TOMLConfigManager.Services
         {
             try
             {
+            
+
                 logger.LogDebug($"Field {fieldKey} contains a file or image... downloading");
 
                 var sourceFile = sourceFileRepository.DownloadFile(sourceRecord.ToEntityReference(), fieldKey);

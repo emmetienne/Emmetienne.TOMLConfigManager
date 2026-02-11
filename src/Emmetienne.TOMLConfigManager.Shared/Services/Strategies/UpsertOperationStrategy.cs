@@ -34,7 +34,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             if (targetRecordId == null && operation.ErrorMessage != null)
                 return;
 
-            var recordToUpsert = sourceRecord;
+            var recordToUpsert = sourceRecord.DeepClone();
 
             var entityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
             var entityFieldsMetadata = MetadataManager.Instance.GetEntityFieldsMetadata(operation.Table, entityMetadataRepository);
@@ -123,8 +123,6 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
         private void SyncFileAndImageFields(OperationExecutionContext context, Entity sourceRecord, Entity targetRecord, TOMLOperationExecutable operation, Dictionary<string, FieldMetadata> entityFieldMetadata)
         {
             logger.LogDebug($"Retrieving entity metadata for table {operation.Table} to check if there are any file or image fields to update.");
-
-
 
             var targetD365RecordRepository = context.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
             var sourceFileRepository = context.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.sourceFileRepository);
