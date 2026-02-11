@@ -4,7 +4,6 @@ using Emmetienne.TOMLConfigManager.Utilities;
 using System;
 using System.Collections.Generic;
 using Tomlyn;
-using Tomlyn.Syntax;
 
 namespace Emmetienne.TOMLConfigManager.Services
 {
