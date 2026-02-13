@@ -58,7 +58,7 @@ namespace Emmetienne.TOMLConfigManager.Services
             {
                 var errorMessage = $"Failed to deserialize the provided TOML content. Error: {ex.Message}";
                 logger.LogError(errorMessage);
-                throw ex;
+                throw;
             }
         }
     }
