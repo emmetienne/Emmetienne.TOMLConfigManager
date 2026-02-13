@@ -116,18 +116,27 @@ namespace Emmetienne.TOMLConfigManager
             if (this.AdditionalConnectionDetails.Count == 0)
             {
                 EventbusSingleton.Instance.disableUiElements?.Invoke(false);
-                this.secondEnvToolStripButton.Text = "Connect to Target Environment";
+                this.secondEnvToolStripButton.Text = "🔌Connect to Target Environment";
                 return;
             }
 
             if (this.AdditionalConnectionDetails != null && this.AdditionalConnectionDetails.Count > 1)
                 this.RemoveAdditionalOrganization(this.AdditionalConnectionDetails[0]);
 
-            this.secondEnvToolStripButton.Text = $"Target {this.AdditionalConnectionDetails[0].ConnectionName}";
+            this.secondEnvToolStripButton.Text = $"🔌 Connected to {this.AdditionalConnectionDetails[0].ConnectionName}";
             logger.LogWarning($"Target environment connection has changed to: {this.AdditionalConnectionDetails[0].WebApplicationUrl}");
 
 
             EventbusSingleton.Instance.disableUiElements?.Invoke(false);
+        }
+
+        private void configurationToolStripButton_Click(object sender, EventArgs e)
+        {
+            //using (var frm = new ConfigurationsForm())
+            //{
+            //    frm.StartPosition = FormStartPosition.CenterParent;
+            //    frm.ShowDialog(this);
+            //}
         }
     }
 }

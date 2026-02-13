@@ -52,6 +52,7 @@ namespace Emmetienne.TOMLConfigManager
             this.timestamp = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.message = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Severity = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.configurationToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel1.SuspendLayout();
@@ -73,7 +74,8 @@ namespace Emmetienne.TOMLConfigManager
             this.toolStripMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openFileToolStripButton,
             this.tssSeparator1,
-            this.secondEnvToolStripButton});
+            this.secondEnvToolStripButton,
+            this.configurationToolStripButton});
             this.toolStripMenu.Location = new System.Drawing.Point(0, 0);
             this.toolStripMenu.Name = "toolStripMenu";
             this.toolStripMenu.Size = new System.Drawing.Size(1035, 25);
@@ -83,8 +85,8 @@ namespace Emmetienne.TOMLConfigManager
             // 
             this.openFileToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.openFileToolStripButton.Name = "openFileToolStripButton";
-            this.openFileToolStripButton.Size = new System.Drawing.Size(75, 22);
-            this.openFileToolStripButton.Text = "Open TOML";
+            this.openFileToolStripButton.Size = new System.Drawing.Size(90, 22);
+            this.openFileToolStripButton.Text = "📂 Open TOML";
             // 
             // tssSeparator1
             // 
@@ -97,8 +99,9 @@ namespace Emmetienne.TOMLConfigManager
             this.secondEnvToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("secondEnvToolStripButton.Image")));
             this.secondEnvToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.secondEnvToolStripButton.Name = "secondEnvToolStripButton";
-            this.secondEnvToolStripButton.Size = new System.Drawing.Size(177, 22);
-            this.secondEnvToolStripButton.Text = "Connect to Target Environment";
+            this.secondEnvToolStripButton.Size = new System.Drawing.Size(189, 22);
+            this.secondEnvToolStripButton.Text = "🔌Connect to Target Environment";
+            this.secondEnvToolStripButton.ToolTipText = "Connect to Target Environment";
             this.secondEnvToolStripButton.Click += new System.EventHandler(this.OnSecondEnvironmentButtonClick);
             // 
             // mainSplitContainer
@@ -265,6 +268,17 @@ namespace Emmetienne.TOMLConfigManager
             this.Severity.ReadOnly = true;
             this.Severity.Width = 70;
             // 
+            // configurationToolStripButton
+            // 
+            this.configurationToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.configurationToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.configurationToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("configurationToolStripButton.Image")));
+            this.configurationToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.configurationToolStripButton.Name = "configurationToolStripButton";
+            this.configurationToolStripButton.Size = new System.Drawing.Size(105, 22);
+            this.configurationToolStripButton.Text = "⚙️ Configurations";
+            this.configurationToolStripButton.Click += new System.EventHandler(this.configurationToolStripButton_Click);
+            // 
             // TOMLConfigurationManagerControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,5 +325,6 @@ namespace Emmetienne.TOMLConfigManager
         private System.Windows.Forms.DataGridViewTextBoxColumn Severity;
         private SplitContainerWithHandlesControl mainSplitContainer;
         private SplitContainerWithHandlesControl controlsSplitContainer;
+        private System.Windows.Forms.ToolStripButton configurationToolStripButton;
     }
 }
