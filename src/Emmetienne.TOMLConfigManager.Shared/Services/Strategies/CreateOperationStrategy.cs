@@ -1,10 +1,9 @@
 ﻿using Emmetienne.TOMLConfigManager.Constants;
-using Emmetienne.TOMLConfigManager.Converters;
 using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
-using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
@@ -21,16 +20,16 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             var operation = operationExecutionContext.OperationExecutable;
 
-            var recordToCreate = new Entity(operation.Table);
+            var entityBuilder = new EntityBuilder();
 
-            // gestione cache
-            for (int i = 0; i < operation.Fields.Count; i++)
+            var recordToCreate = entityBuilder.BuildEntity(operationExecutionContext, null, out string errorMessages);
+
+            if (recordToCreate == null)
             {
-                var targetEntityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>("Target.EntityMetadataRepository");
-
-                var fieldMetadata = MetadataManager.Instance.GetAttributeTypeCode(operation.Table, operation.Fields[i], targetEntityMetadataRepository);
-
-                recordToCreate[operation.Fields[i]] = FieldValueConverter.Convert(operation.Values[i], fieldMetadata);
+                var errorMessage = $"Failed to build record to create for table {operation.Table}. Errors: {errorMessages}";
+                logger.LogError(errorMessage);
+                operation.ErrorMessage = errorMessage;
+                return;
             }
 
             logger.LogDebug($"Creating record in table {operation.Table}.");
@@ -38,6 +37,21 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             var createdRecordId = targetD365RecordRepository.CreateRecord(recordToCreate);
 
             logger.LogDebug($"Record created in table {operation.Table} with Id {createdRecordId}.");
+
+            var targetEntityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
+
+            foreach (var field in operation.Fields)
+            {
+                var fieldMetadata = MetadataManager.Instance.GetAttributeType(operation.Table, field, targetEntityMetadataRepository);
+
+                if (fieldMetadata.AttributeType != typeof(FileAttributeMetadata) && fieldMetadata.AttributeType != typeof(ImageAttributeMetadata))
+                    continue;
+
+                var warningMessage = $"/!\\ Record has been created with Id <{createdRecordId}>, but file operations are not supported for create operations, please use replace operation to upload file or images";
+                logger.LogWarning(warningMessage);
+                operation.WarningMessage = warningMessage;
+                operation.IsRetryable = false;
+            }      
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Emmetienne.TOMLConfigManager.Services
             this.logger = logger;
         }
 
-        public List<TOMLOperationExecutable> PortConfigurations(List<TOMLOperationExecutable> TOMLOperationExecutableList)
+        public List<TOMLOperationExecutable> PortConfigurations(List<TOMLOperationExecutable> TOMLOperationExecutableList, string baseSourceFilePath = null)
         {
             var repositoryRegistry = new RepositoryRegistry();
 
@@ -50,7 +50,7 @@ namespace Emmetienne.TOMLConfigManager.Services
                     logger.LogDebug($"Executing {operation.Type} Operation for TOML");
                     logger.LogInfo(operation.ToString());
 
-                    var operationExecutionContext = new OperationExecutionContext(operation, repositoryRegistry);
+                    var operationExecutionContext = new OperationExecutionContext(operation, repositoryRegistry, baseSourceFilePath);
 
                     try
                     {

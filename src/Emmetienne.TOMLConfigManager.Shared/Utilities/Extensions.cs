@@ -124,7 +124,20 @@ namespace Emmetienne.TOMLConfigManager.Utilities
 
             return executable;
         }
+        public static bool IsValidBase64(this string base64String)
+        {
+            if (string.IsNullOrWhiteSpace(base64String))
+                return false;
 
-
+            try
+            {
+                Convert.FromBase64String(base64String);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Emmetienne.TOMLConfigManager.Constants;
-using Emmetienne.TOMLConfigManager.Converters;
 using Emmetienne.TOMLConfigManager.Logger;
-using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
-using Microsoft.Xrm.Sdk;
+using System;
 
 namespace Emmetienne.TOMLConfigManager.Services.Strategies
 {
@@ -41,25 +39,16 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                 return;
             }
 
-            var recordToUpdate = new Entity(operation.Table);
-            recordToUpdate.Id = targetRecords.Entities[0].Id;
+            var entityBuilder = new EntityBuilder();
 
+            var recordToUpdate = entityBuilder.BuildEntity(operationExecutionContext, targetRecords.Entities[0].Id, out string errorMessages);
 
-            for (int i = 0; i < operation.Fields.Count; i++)
+            if (recordToUpdate == null)
             {
-                var targetEntityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
-
-                var fieldMetadata = MetadataManager.Instance.GetAttributeTypeCode(operation.Table, operation.Fields[i], targetEntityMetadataRepository);
-
-                if (fieldMetadata == null)
-                {
-                    var errorMessage = $"Metadata not found for {operation.Fields[i]} in table {operation.Table}";
-                    logger.LogError(errorMessage);
-                    operation.ErrorMessage = errorMessage;
-                    return;
-                }
-
-                recordToUpdate[operation.Fields[i]] = FieldValueConverter.Convert(operation.Values[i], fieldMetadata);
+                var errorMessage = $"Failed to build record to update for table {operation.Table} with Id {targetRecords.Entities[0].Id}. Errors: {errorMessages}";
+                logger.LogError(errorMessage);
+                operation.ErrorMessage = errorMessage;
+                return;
             }
 
             logger.LogDebug($"Updating record in table {operation.Table} with Id {recordToUpdate.Id} in target environment");
@@ -67,6 +56,12 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             targetD365RecordRepository.UpdateRecord(recordToUpdate);
 
             logger.LogDebug($"Record in table {operation.Table} with Id {recordToUpdate.Id} updated successfully in target environment");
+
+            var fileImageFieldSyncService = new FileImageFieldSyncService(logger, operationExecutionContext.Repositories);
+
+            var warningMessageList = fileImageFieldSyncService.SyncFileAndImageFieldsFromConfiguration(operationExecutionContext, recordToUpdate.Id);
+
+            operation.WarningMessage = string.Join(Environment.NewLine, warningMessageList);
         }
     }
 }

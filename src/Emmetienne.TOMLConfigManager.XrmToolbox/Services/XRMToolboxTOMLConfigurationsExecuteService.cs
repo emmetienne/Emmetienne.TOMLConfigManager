@@ -108,7 +108,7 @@ namespace Emmetienne.TOMLConfigManager.Services
                             continue;
                         }
 
-                        control.SetWarning(tomlOperationExecutableFound.WarningMessage);
+                        control.SetWarning(tomlOperationExecutableFound.WarningMessage, tomlOperationExecutableFound.IsRetryable);
                     }
 
                     EventbusSingleton.Instance.disableUiElements?.Invoke(false);

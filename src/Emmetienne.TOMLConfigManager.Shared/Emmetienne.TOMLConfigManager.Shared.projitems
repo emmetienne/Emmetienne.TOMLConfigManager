@@ -9,6 +9,7 @@
     <Import_RootNamespace>Emmetienne.TOMLConfigManager</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\FileHandlingTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\OperationTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\RepositoryRegistryKeys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FieldValueConverter.cs" />
@@ -25,7 +26,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365FileRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365RecordRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\EntityMetadataRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\FileImageFieldSyncHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\FileImageFieldSyncService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\CreateOperationStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\DeleteOperationStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\IOperationStrategy.cs" />
@@ -34,6 +35,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\UpsertOperationStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLParsingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLConfigurationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Builders\EntityBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Extensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Builders\" />
   </ItemGroup>
 </Project>

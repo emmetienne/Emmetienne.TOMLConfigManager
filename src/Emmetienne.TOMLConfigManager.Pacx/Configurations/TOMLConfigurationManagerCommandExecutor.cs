@@ -60,11 +60,15 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
 
                 var tomlExecuted = tomlExecutionService.PortConfigurations(tomlOperationList);
 
+                Console.ReadLine();
+
                 return CommandResult.Success();
             }
             catch (Exception ex)
             {
                 pacxTOMLLogger.LogError($"An error occurred while executing the TOML configuration: {ex.Message}");
+
+                Console.ReadLine();
                 return CommandResult.Fail($"An error occurred while executing the TOML configuration: {ex.Message}");         
             }
         }
