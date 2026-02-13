@@ -7,6 +7,7 @@ using Emmetienne.TOMLConfigManager.Services.Strategies;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Emmetienne.TOMLConfigManager.Services
 {
@@ -25,6 +26,17 @@ namespace Emmetienne.TOMLConfigManager.Services
 
         public List<TOMLOperationExecutable> PortConfigurations(List<TOMLOperationExecutable> TOMLOperationExecutableList, string baseSourceFilePath = null)
         {
+            if (TOMLOperationExecutableList == null || TOMLOperationExecutableList.Count == 0)
+            {
+                logger.LogDebug("No TOML Operations to execute");
+                return TOMLOperationExecutableList;
+            }
+
+            if (string.IsNullOrWhiteSpace(baseSourceFilePath))
+                logger.LogWarning($"/!\\ No base path provided, using working directory as base path {Directory.GetCurrentDirectory()}");
+            else
+                logger.LogDebug($"Base path for files and images provided {baseSourceFilePath}");
+
             var repositoryRegistry = new RepositoryRegistry();
 
             repositoryRegistry.Add(RepositoryRegistryKeys.sourceRecordRepository, new D365RecordRepository(sourceOrganizationService));
@@ -33,11 +45,6 @@ namespace Emmetienne.TOMLConfigManager.Services
             repositoryRegistry.Add(RepositoryRegistryKeys.targetEntityMetadataRepository, new EntityMetadataRepository(targetOrganizationService));
             repositoryRegistry.Add(RepositoryRegistryKeys.sourceFileRepository, new D365FileRepository(sourceOrganizationService));
             repositoryRegistry.Add(RepositoryRegistryKeys.targetFileRepository, new D365FileRepository(targetOrganizationService));
-
-            if (TOMLOperationExecutableList == null || TOMLOperationExecutableList.Count == 0)
-            {
-                logger.LogDebug("No TOML Operations to execute");
-            }
 
             logger.LogInfo("Starting TOML operations execution...");
 

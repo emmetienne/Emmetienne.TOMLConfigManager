@@ -52,7 +52,7 @@ namespace Emmetienne.TOMLConfigManager
             this.timestamp = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.message = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Severity = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.configurationToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.settingsToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitContainer)).BeginInit();
             this.mainSplitContainer.Panel1.SuspendLayout();
@@ -75,7 +75,7 @@ namespace Emmetienne.TOMLConfigManager
             this.openFileToolStripButton,
             this.tssSeparator1,
             this.secondEnvToolStripButton,
-            this.configurationToolStripButton});
+            this.settingsToolStripButton});
             this.toolStripMenu.Location = new System.Drawing.Point(0, 0);
             this.toolStripMenu.Name = "toolStripMenu";
             this.toolStripMenu.Size = new System.Drawing.Size(1035, 25);
@@ -268,16 +268,16 @@ namespace Emmetienne.TOMLConfigManager
             this.Severity.ReadOnly = true;
             this.Severity.Width = 70;
             // 
-            // configurationToolStripButton
+            // settingsToolStripButton
             // 
-            this.configurationToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.configurationToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.configurationToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("configurationToolStripButton.Image")));
-            this.configurationToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.configurationToolStripButton.Name = "configurationToolStripButton";
-            this.configurationToolStripButton.Size = new System.Drawing.Size(105, 22);
-            this.configurationToolStripButton.Text = "⚙️ Configurations";
-            this.configurationToolStripButton.Click += new System.EventHandler(this.configurationToolStripButton_Click);
+            this.settingsToolStripButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.settingsToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.settingsToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("settingsToolStripButton.Image")));
+            this.settingsToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.settingsToolStripButton.Name = "settingsToolStripButton";
+            this.settingsToolStripButton.Size = new System.Drawing.Size(68, 22);
+            this.settingsToolStripButton.Text = "⚙️ Settings";
+            this.settingsToolStripButton.Click += new System.EventHandler(this.configurationToolStripButton_Click);
             // 
             // TOMLConfigurationManagerControl
             // 
@@ -325,6 +325,6 @@ namespace Emmetienne.TOMLConfigManager
         private System.Windows.Forms.DataGridViewTextBoxColumn Severity;
         private SplitContainerWithHandlesControl mainSplitContainer;
         private SplitContainerWithHandlesControl controlsSplitContainer;
-        private System.Windows.Forms.ToolStripButton configurationToolStripButton;
+        private System.Windows.Forms.ToolStripButton settingsToolStripButton;
     }
 }

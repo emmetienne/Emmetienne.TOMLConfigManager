@@ -257,6 +257,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Eventbus\EventbusSingleton.cs" />
+    <Compile Include="Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Logger\XrmToolboxTOMLLogger.cs" />
     <Compile Include="Logger\LogLevel.cs" />
     <Compile Include="Logger\LogModel.cs" />
@@ -281,6 +287,9 @@
     <None Include="THIRD-PARTY-NOTICES.md" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TOMLConfigurationManagerControl.resx">
       <DependentUpon>TOMLConfigurationManagerControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -288,9 +297,7 @@
   <ItemGroup>
     <None Include="LICENSE.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Forms\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\Emmetienne.TOMLConfigManager.Shared\Emmetienne.TOMLConfigManager.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

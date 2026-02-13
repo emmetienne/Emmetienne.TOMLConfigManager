@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Emmetienne.TOMLConfigManager
+﻿namespace Emmetienne.TOMLConfigManager
 {
     /// <summary>
     /// This class can help you to store settings for your plugin
@@ -14,6 +8,6 @@ namespace Emmetienne.TOMLConfigManager
     /// </remarks>
     public class Settings
     {
-        public string LastUsedOrganizationWebappUrl { get; set; }
+        public string FileAndImageBasePath { get; set; } = string.Empty;
     }
 }

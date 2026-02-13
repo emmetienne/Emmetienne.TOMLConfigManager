@@ -12,12 +12,14 @@ namespace Emmetienne.TOMLConfigManager.Services
     public class XRMToolboxTOMLConfigurationsExecuteService
     {
         private readonly MultipleConnectionsPluginControlBase multipleConnectionsPluginControl;
+        private readonly Settings settings;
         private readonly ILogger logger;
 
-        public XRMToolboxTOMLConfigurationsExecuteService(MultipleConnectionsPluginControlBase multipleConnectionsPluginControl, ILogger logger)
+        public XRMToolboxTOMLConfigurationsExecuteService(MultipleConnectionsPluginControlBase multipleConnectionsPluginControl, Settings settings, ILogger logger)
         {
             this.multipleConnectionsPluginControl = multipleConnectionsPluginControl;
             this.logger = logger;
+            this.settings = settings;
 
             EventbusSingleton.Instance.executeTOMLOperations += PortCongifurations;
         }
@@ -71,7 +73,7 @@ namespace Emmetienne.TOMLConfigManager.Services
                         return;
                     }
 
-                    configurationService.PortConfigurations(TOMLOperationsExecutableSelected);
+                    configurationService.PortConfigurations(TOMLOperationsExecutableSelected, this.settings.FileAndImageBasePath);
 
                     args.Result = TOMLOperationsExecutableSelected;
                 },
