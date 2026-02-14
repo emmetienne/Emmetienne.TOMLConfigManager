@@ -167,7 +167,7 @@ All in a simple, human‑readable TOML format.
 ## Properties and Feature Quick Reference
 
 | type | `table` | `match_on` | `rows` | `fields` | `values` | `ignore_fields` | File/Image support | 
-|------|---------|-----------|--------|----------|----------|----------------|----------------||
+|------|---------|-----------|--------|----------|----------|----------------|----------------|
 | `create` | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
 | `replace` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
 | `upsert` | ✅ | ✅ | ✅ | ❌ | ❌ | ⚪ Optional | ✅ |
