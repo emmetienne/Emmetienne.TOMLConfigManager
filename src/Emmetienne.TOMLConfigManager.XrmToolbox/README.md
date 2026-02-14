@@ -1,10 +1,8 @@
 ﻿# TOML Config Manager – XrmToolBox Host
 
-An interactive tool for executing and managing TOML-based Dataverse configuration operations within [XrmToolBox](https://www.xrmtoolbox.com/).
+An interactive execution host for the TOML Config Manager engine, designed for controlled, visual, and selective configuration management in Microsoft Dataverse / Dynamics 365 environments within [XrmToolBox](https://www.xrmtoolbox.com/).
 
-This plugin provides a visual execution layer for the [TOML Config Manager engine](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/), enabling controlled and selective configuration updates in Microsoft Dataverse / Dynamics 365 environments.
-
-
+This plugin provides an execution layer for the [TOML Config Manager engine](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/).
 
 ## Installation
 
@@ -25,13 +23,23 @@ TOML configuration can be provided in two ways:
 
 The content in the editor is always the source of truth for parsing and execution.
 
+## Settings
 
+The plugin provides a `Settings` button that opens a configuration dialog.
+
+Currently supported setting:
+
+- Files/Images Base Path: used to resolve relative file paths when handling file and image columns.
+	- If defined, the Base Path will be used for resolving relative paths.
+	- If not defined, the current working directory is used.
+	
 ## How It Works
 
 1. Provide TOML content (file or paste).
+	- For a detailed reference of supported operations and syntax, see the [Core Engine Documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/README.md).
 2. Parse the configuration.
 3. Review the detected operations.
-4. Select which operations to execute.
+4. Select which operations to execute, by default all operations are selected.
 5. Run execution against the connected Dataverse environment.
 
 Operations are executed sequentially in the exact order defined in the TOML input.
@@ -69,13 +77,19 @@ During execution:
 - **Successful operations**
   - Card turns green  
   - Automatically disabled  
+ 
+- **Operations with warnings**
+  - Card turns yellow  
+  - Warning message is displayed  
+  - Automatically deselected
+  - Some operations with warnings can be manually re-selected and re-executed after review, depending on the nature of the warning.
 
 - **Failed operations**
   - Card turns red  
   - Error message is displayed  
   - Automatically deselected  
 
-Failed operations can be manually re-selected and re-executed.
+Failed operations and some operations with warnings can be manually re-selected and re-executed.
 
 This enables iterative correction scenarios without re-running the entire configuration file.
 
@@ -93,7 +107,7 @@ The plugin leverages the shared TOML Config Manager core engine and follows a de
 
 A failed operation does not stop subsequent operations.
 
-
+Visual state always reflects the actual execution outcome of each operation.
 
 ## When to Use the XrmToolBox Host
 
@@ -107,8 +121,6 @@ Use this plugin when you need:
 
 For non-interactive or pipeline-driven execution, use the PACX host instead.
 
-
-
 ## Related Documentation
 
 * [Core Engine Documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/README.md)
@@ -117,15 +129,11 @@ For non-interactive or pipeline-driven execution, use the PACX host instead.
 
 ## Contributing & Feedback
 
-[](https://github.com/emmetienne/Emmetienne.TOMLConfigManager?tab=readme-ov-file#contributing--feedback)
-
 Feedback, feature suggestions, and issue reports are welcome.
 
 Please open an issue in the repository to discuss improvements or report unexpected behavior.
 
 ## License
-
-[](https://github.com/emmetienne/Emmetienne.TOMLConfigManager?tab=readme-ov-file#license)
 
 This project is licensed under the MIT License.
 
@@ -133,8 +141,6 @@ This project is licensed under the MIT License.
 
 This project relies on the excellent open-source library:
 
-- **Tomlyn** by Alexandre Mutel  
-  A .NET TOML parser licensed under BSD-2-Clause.  
-  https://github.com/xoofx/Tomlyn
+- **Tomlyn** by Alexandre Mutel, a .NET TOML parser licensed under BSD-2-Clause. https://github.com/xoofx/Tomlyn
 
 See [THIRD-PARTY-NOTICES.md](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.XrmToolbox/THIRD-PARTY-NOTICES.md) for full license details.
