@@ -8,13 +8,13 @@ using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 
-namespace Emmetienne.TOMLConfigManager.Services.Strategies
+namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy
 {
-    internal class UpsertOperationStrategy : IOperationStrategy
+    internal class UpsertOperationExecutionStrategy : IOperationExecutionStrategy
     {
         private readonly ILogger logger;
 
-        public UpsertOperationStrategy(ILogger logger)
+        public UpsertOperationExecutionStrategy(ILogger logger)
         {
             this.logger = logger;
         }
@@ -25,7 +25,8 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             var targetD365RecordRepository = operationExecutionContext.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
             var operation = operationExecutionContext.OperationExecutable;
 
-            var sourceRecord = GetValidatedSourceRecord(sourceD365RecordRepository, operation);
+            var sourceRecord = GetSourceRecord(sourceD365RecordRepository, operation);
+            
             if (sourceRecord == null)
                 return;
 
@@ -34,6 +35,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
             if (targetRecordId == null && operation.ErrorMessage != null)
                 return;
 
+            // create a deepclone of the source record to be used for upsert operation, this is to ensure that the source record remains unchanged for file and image field synchronization later
             var recordToUpsert = sourceRecord.DeepClone();
 
             var entityMetadataRepository = operationExecutionContext.Repositories.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
@@ -50,20 +52,15 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             recordToUpsert = recordToUpsert.RemoveOutOfTheBoxAndExcludedFields(operation.IgnoreFields);
 
-
             if (targetRecordId == null)
-            {
                 CreateNewRecord(targetD365RecordRepository, recordToUpsert, operation);
-            }
             else
-            {
                 UpdateExistingRecord(targetD365RecordRepository, recordToUpsert, targetRecordId.Value, operation);
-            }
 
             SyncFileAndImageFields(operationExecutionContext, sourceRecord, recordToUpsert, operation, entityFieldsMetadata);
         }
 
-        private Entity GetValidatedSourceRecord(D365RecordRepository sourceRepository, TOMLOperationExecutable operation)
+        private Entity GetSourceRecord(D365RecordRepository sourceRepository, TOMLOperationExecutable operation)
         {
             var sourceRecords = sourceRepository.GetRecordFromEnvironment(operation.Table, operation.MatchOn, operation.Row, true);
 
@@ -117,20 +114,16 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             targetRepository.UpdateRecord(recordToUpsert);
 
-            logger.LogDebug($"Record in table {operation.Table} with ID {recordToUpsert.Id} updated successfully in target environment");
+            logger.LogDebug($"Record in table {operation.Table} with Id {recordToUpsert.Id} updated successfully in target environment");
         }
 
         private void SyncFileAndImageFields(OperationExecutionContext context, Entity sourceRecord, Entity targetRecord, TOMLOperationExecutable operation, Dictionary<string, FieldMetadata> entityFieldMetadata)
         {
             logger.LogDebug($"Retrieving entity metadata for table {operation.Table} to check if there are any file or image fields to update.");
 
-            var targetD365RecordRepository = context.Repositories.Get<D365RecordRepository>(RepositoryRegistryKeys.targetRecordRepository);
-            var sourceFileRepository = context.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.sourceFileRepository);
-            var targetFileRepository = context.Repositories.Get<D365FileRepository>(RepositoryRegistryKeys.targetFileRepository);
+            var fileImageSyncHelper = new FileImageFieldSyncService(logger, context.Repositories);
 
-            var fileImageSyncHelper = new FileImageFieldSyncHelper(logger, targetD365RecordRepository, sourceFileRepository, targetFileRepository);
-
-            var warningMessages = fileImageSyncHelper.SyncFileAndImageFields(sourceRecord, targetRecord, entityFieldMetadata);
+            var warningMessages = fileImageSyncHelper.SyncFileAndImageFieldsFromSourceRecord(sourceRecord, targetRecord, operation.IgnoreFields, entityFieldMetadata);
 
             operation.WarningMessage = string.Join(Environment.NewLine, warningMessages);
         }

@@ -13,7 +13,7 @@ namespace Emmetienne.TOMLConfigManager
 {
     public partial class TOMLConfigurationManagerControl : MultipleConnectionsPluginControlBase
     {
-        private Settings mySettings;
+        private Settings settings;
 
         private readonly XrmToolboxTOMLLogger logger;
 
@@ -37,6 +37,8 @@ namespace Emmetienne.TOMLConfigManager
 
             logger = new XrmToolboxTOMLLogger();
 
+            LoadSettings();
+
             loggingComponent = new XrmToolboxLoggingComponent(this.logDataGridView);
             panelCardComponent = new PanelCardComponent(this.panelCards);
             tomlRichTextBoxComponent = new TOMLRichTextBoxComponent(this.tomlRichTextBox);
@@ -48,7 +50,7 @@ namespace Emmetienne.TOMLConfigManager
 
             openTOMLService = new OpenTOMLService(logger);
             xrmToolboxTOMLParsingService = new XRMToolboxTOMLParsingService(this, logger);
-            xrmToolboxTOMLConfigurationsPortingService = new XRMToolboxTOMLConfigurationsExecuteService(this, logger);
+            xrmToolboxTOMLConfigurationsPortingService = new XRMToolboxTOMLConfigurationsExecuteService(this, settings, logger);
         }
 
         private void MyPluginControl_Load(object sender, EventArgs e)
@@ -65,6 +67,20 @@ namespace Emmetienne.TOMLConfigManager
         {
 
         }
+
+        private void LoadSettings()
+        {
+            if (SettingsManager.Instance.TryLoad(typeof(TOMLConfigurationManagerControl), out settings))
+            {
+                logger.LogDebug($"Settings has been retrieved and loaded");
+            }
+            else
+            {
+                settings = new Settings();
+                logger.LogDebug($"New settings has been created");
+            }
+        }
+
 
         /// <summary>
         /// This event occurs when the connection has been updated in XrmToolBox
@@ -116,18 +132,27 @@ namespace Emmetienne.TOMLConfigManager
             if (this.AdditionalConnectionDetails.Count == 0)
             {
                 EventbusSingleton.Instance.disableUiElements?.Invoke(false);
-                this.secondEnvToolStripButton.Text = "Connect to Target Environment";
+                this.secondEnvToolStripButton.Text = "🔌Connect to Target Environment";
                 return;
             }
 
             if (this.AdditionalConnectionDetails != null && this.AdditionalConnectionDetails.Count > 1)
                 this.RemoveAdditionalOrganization(this.AdditionalConnectionDetails[0]);
 
-            this.secondEnvToolStripButton.Text = $"Target {this.AdditionalConnectionDetails[0].ConnectionName}";
+            this.secondEnvToolStripButton.Text = $"🔌 Connected to {this.AdditionalConnectionDetails[0].ConnectionName}";
             logger.LogWarning($"Target environment connection has changed to: {this.AdditionalConnectionDetails[0].WebApplicationUrl}");
 
 
             EventbusSingleton.Instance.disableUiElements?.Invoke(false);
+        }
+
+        private void configurationToolStripButton_Click(object sender, EventArgs e)
+        {
+            using (var form = new Emmetienne.TOMLConfigManager.Forms.SettingsForm(settings,logger))
+            {
+                form.StartPosition = FormStartPosition.CenterParent;
+                form.ShowDialog(this);
+            }
         }
     }
 }

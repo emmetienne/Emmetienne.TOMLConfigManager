@@ -9,6 +9,8 @@
     <Import_RootNamespace>Emmetienne.TOMLConfigManager</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\FileHandlingTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\MatchOnTypeBlackList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\OperationTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants\RepositoryRegistryKeys.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FieldValueConverter.cs" />
@@ -25,15 +27,25 @@
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365FileRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\D365RecordRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repositories\EntityMetadataRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\FileImageFieldSyncHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\CreateOperationStrategy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\DeleteOperationStrategy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\IOperationStrategy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationStrategyFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\ReplaceOperationStrategy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\UpsertOperationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\FileImageFieldSyncService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\CreateOperationExecutionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\DeleteOperationExecutionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\IOperationExecutionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\OperationExecutionStrategyFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\ReplaceOperationExecutionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\UpsertOperationExecutionStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationValidationStrategy\IOperationValidationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationValidationStrategy\OperationValidationStrategyFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationValidationStrategy\CreateOperationValidationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationValidationStrategy\UpsertDeleteOperationValidationStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationValidationStrategy\ReplaceOperationValidationStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLParsingService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\TOMLConfigurationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Builders\EntityBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utilities\Extensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Builders\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Services\Strategies\OperationExecutionStrategy\" />
   </ItemGroup>
 </Project>

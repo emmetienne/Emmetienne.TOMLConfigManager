@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 *.nuspec
+
+ 
+/src/Emmetienne.TOMLConfigManager.Pacx/Properties/launchSettings.json

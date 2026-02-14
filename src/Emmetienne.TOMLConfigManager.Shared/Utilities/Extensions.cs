@@ -1,5 +1,6 @@
 ﻿using Emmetienne.TOMLConfigManager.Models;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +114,7 @@ namespace Emmetienne.TOMLConfigManager.Utilities
 
             if (!supportedTypes.Contains(raw.Type))
                 throw new Exception($"No operation type of '{raw.Type}' can be parsed for the following TOML operation{Environment.NewLine}{Toml.FromModel(raw)}");
-            
+
             executable.Type = raw.Type ?? string.Empty;
             executable.Table = raw?.Table ?? string.Empty;
             executable.MatchOn = raw?.MatchOn ?? new List<string>();
@@ -124,7 +125,25 @@ namespace Emmetienne.TOMLConfigManager.Utilities
 
             return executable;
         }
+        public static bool IsValidBase64(this string base64String)
+        {
+            if (string.IsNullOrWhiteSpace(base64String))
+                return false;
 
+            try
+            {
+                Convert.FromBase64String(base64String);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
 
+        public static bool IsFileOrImageField(this Type attributeMetadataType)
+        {
+            return attributeMetadataType == typeof(FileAttributeMetadata) || attributeMetadataType == typeof(ImageAttributeMetadata);
+        }
     }
 }

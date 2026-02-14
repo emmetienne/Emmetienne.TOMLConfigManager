@@ -1,8 +1,8 @@
 ﻿using Emmetienne.TOMLConfigManager.Models;
 
-namespace Emmetienne.TOMLConfigManager.Services.Strategies
+namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy
 {
-    public interface IOperationStrategy
+    public interface IOperationExecutionStrategy
     {
         void ExecuteOperation(OperationExecutionContext operationExecutionContext);
     }

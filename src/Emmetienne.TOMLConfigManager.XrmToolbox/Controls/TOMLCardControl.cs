@@ -173,7 +173,7 @@ namespace Emmetienne.TOMLConfigManager.Controls
             Invalidate();
         }
 
-        public void SetWarning(string message)
+        public void SetWarning(string message, bool IsRetryable = true)
         {
             currentStatus = StatusType.Warning;
             statusMessage = message;
@@ -181,13 +181,13 @@ namespace Emmetienne.TOMLConfigManager.Controls
             statusMessageColor = Color.DarkGoldenrod;
 
             IsSelected = false;
-            showCheckbox = true;
+            showCheckbox = IsRetryable;
 
             currentBorderColor = Color.DarkOrange;
             targetBorderColor = Color.DarkOrange;
             borderThickness = 2f;
             targetBorderThickness = 2f;
-
+    
             RecalculateStatusMessageHeight();
             Invalidate();
         }

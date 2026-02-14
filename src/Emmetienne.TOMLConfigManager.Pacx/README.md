@@ -1,7 +1,7 @@
 ﻿
 # TOML Config Manager – PACX Host  
 
-This project integrates [**TOML Config Manager engine**](https://github.com/emmetienne/Emmetienne.TOMLConfigManager) with [**PACX / Greg.Xrm.Command**](https://github.com/neronotte/Greg.Xrm.Command), enabling CLI and non-interactive and CI/CD-friendly execution of declarative configuration operations for Microsoft Dataverse / Dynamics 365.  
+This project integrates [**TOML Config Manager engine**](https://github.com/emmetienne/Emmetienne.TOMLConfigManager) with [**PACX / Greg.Xrm.Command**](https://github.com/neronotte/Greg.Xrm.Command), enabling CLI, non-interactive, and CI/CD-friendly execution of declarative configuration operations for Microsoft Dataverse / Dynamics 365.  
 
 It enables TOML-defined configuration updates to be executed consistently across manual CLI usage and automated CI/CD environments.  
 
@@ -18,6 +18,20 @@ The PACX host exposes TOML Config Manager as a CLI-based execution layer, usable
 * Post-deployment configuration enforcement  
 
 It enables deterministic, order-preserving execution within DevOps workflows.  
+
+## TOML Syntax Reference
+
+The PACX host does not redefine TOML syntax; it executes configurations exactly as defined by the shared core engine.
+
+For full details on:
+- Supported operations
+- Cardinality rules
+- Null handling behavior
+- File and image column syntax
+- Path resolution rules
+
+
+Refer to the [Core Engine Documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/README.md).
 
 ## Installation
 
@@ -57,26 +71,25 @@ This model ensures predictable and observable behavior in automated pipelines.
 
 Provide TOML content either as a file or as an inline string.  
 
-* `--path`, `-p`
+* `--path`, `-p`  
+  Path to the TOML file.
 
-Path to the TOML file.  
+* `--TOMLstring`, `-ts`  
+  TOML content passed as a string.
 
-* `--TOMLstring`, `-ts`
-
-TOML content passed as a string.  
+* `--filebasepath`, `-fbp`  
+  Base path used to resolve **relative** file paths when handling file and image columns.  
+  If not provided, the current working directory is used.
 
 ### Connections  
 
-* `--source`, `-s`
+* `--source`, `-s`  
+  Name of the source PACX connection to a Dataverse environment.  
 
-Name of the source PACX connection to a Dataverse environment.  
+* `--target`, `-t`  
+  Name of the target PACX connection to a Dataverse environment.  
 
-* `--target`, `-t`
-
-Name of the target PACX connection to a Dataverse environment.  
-
-Both `source` and `target` must refer to connections configured in PACX / Greg.Xrm.Command.
-  
+Both `source` and `target` must refer to connections configured in PACX / Greg.Xrm.Command. 
   
 
 ## Example Usage  
@@ -85,7 +98,7 @@ Both `source` and `target` must refer to connections configured in PACX / Greg.X
 
 ```bash
 
-pacx configurations TOML --source DEV --target TEST --path "C:\test.toml"
+pacx configurations TOML --source DEV --target TEST --path "C:\repo\config\test.toml" --filebasepath "C:\repo"
 
 ``` 
 
@@ -93,7 +106,7 @@ pacx configurations TOML --source DEV --target TEST --path "C:\test.toml"
 
 ```bash
 
-pacx configurations TOML --source DEV --target TEST --TOMLstring "[[operation]]\ntype=\"delete\"\ntable=\"account\"\nmatch_on=[\"accountnumber\"]\nrows=[[\"ACC001\"]]\n"
+pacx configurations TOML --source DEV --target TEST --TOMLstring "[[operation]]\ntype=\"delete\"\ntable=\"account\"\nmatch_on=[\"accountnumber\"]\nrows=[[\"ACC001\"]]\n" --filebasepath "C:\repo"
 
 ``` 
 
@@ -102,8 +115,7 @@ Adjust the command verb according to your PACX configuration.
 
 ## CI/CD Integration  
 
-The PACX command can be invoked from any CI/CD system capable of executing shell commands.
-  
+The PACX command can be invoked from any CI/CD system capable of executing shell commands. 
   
 
 ## Error Handling  
@@ -116,8 +128,7 @@ The PACX command can be invoked from any CI/CD system capable of executing shell
 
 * Subsequent operations continue even if a previous one fails.  
 
-This enables controlled correction scenarios without losing execution visibility.
-  
+This enables controlled correction scenarios without losing execution visibility.  
   
 
 ## When to Use the PACX Host  
@@ -141,9 +152,8 @@ For interactive execution with operation selection and retry capabilities, use t
 
 * [Core Engine Documentation](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/README.md) 
 * [XrmToolBox Host](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.XrmToolbox/README.md) 
-## Contributing & Feedback
 
-[](https://github.com/emmetienne/Emmetienne.TOMLConfigManager?tab=readme-ov-file#contributing--feedback)
+## Contributing & Feedback
 
 Feedback, feature suggestions, and issue reports are welcome.
 
@@ -151,16 +161,12 @@ Please open an issue in the repository to discuss improvements or report unexpec
 
 ## License
 
-[](https://github.com/emmetienne/Emmetienne.TOMLConfigManager?tab=readme-ov-file#license)
-
 This project is licensed under the MIT License.
 
 ## Credits
 
 This project relies on the excellent open-source library:
 
-- **Tomlyn** by Alexandre Mutel  
-  A .NET TOML parser licensed under BSD-2-Clause.  
-  https://github.com/xoofx/Tomlyn
+- **Tomlyn** by Alexandre Mutel, a .NET TOML parser licensed under BSD-2-Clause. https://github.com/xoofx/Tomlyn
 
 See [THIRD-PARTY-NOTICES.md](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/src/Emmetienne.TOMLConfigManager.Pacx/THIRD-PARTY-NOTICES.md) for full license details.

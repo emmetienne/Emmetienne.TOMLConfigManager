@@ -14,7 +14,6 @@ namespace Emmetienne.TOMLConfigManager.Repositories
             this.organizationService = organizationService;
         }
 
-        // testare se è tutto fattibile oppure ci sono casi particolari di cast non automatici (tipo int o simili, o magari se boxando funziona)
         public EntityCollection GetRecordFromEnvironment(string entityLogicalName, List<string> fieldLogicalNames, List<string> fieldValues, bool retrieveAllFields)
         {
             if (fieldLogicalNames == null)
@@ -31,7 +30,12 @@ namespace Emmetienne.TOMLConfigManager.Repositories
             query.ColumnSet.AllColumns = retrieveAllFields;
 
             for (int i = 0; i < fieldValues.Count; i++)
-                query.Criteria.AddCondition(fieldLogicalNames[i], ConditionOperator.Equal, fieldValues[i]);
+            {
+                if (string.IsNullOrWhiteSpace(fieldValues[i]))
+                    query.Criteria.AddCondition(fieldLogicalNames[i], ConditionOperator.Null);
+                else
+                    query.Criteria.AddCondition(fieldLogicalNames[i], ConditionOperator.Equal, fieldValues[i]);
+            }
 
             return organizationService.RetrieveMultiple(query);
         }

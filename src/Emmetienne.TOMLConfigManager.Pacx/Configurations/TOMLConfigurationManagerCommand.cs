@@ -11,6 +11,9 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
         [Option("TOMLstring", "ts", HelpText = "The TOML string")]
         public string? TOMLString { get; set; }
 
+        [Option("filebasepath", "fbp", HelpText = "The base path that will be used for retrieving files")]
+        public string? FileBasePath { get; set; }
+
         [Option("source", "s", HelpText = "Name of the source connection to a D365 environment")]
         public string SourceConnection { get; set; }
 

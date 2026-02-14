@@ -40,8 +40,8 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
                 pacxTOMLLogger.LogDebug("Provided TOML content:");
                 pacxTOMLLogger.LogInfo(tomlContent);
 
-                pacxTOMLLogger.LogInfo("Parsing TOML file...");
                 var TOMLOperationsDeserialized = Toml.ToModel<TOMLParsed>(tomlContent);
+                pacxTOMLLogger.LogInfo("TOML file parsed");
 
                 pacxTOMLLogger.LogDebug($"Connecting to source ({command.SourceConnection}) organization...");
                 var sourceService = await organizationServiceRepository.GetConnectionByName(command.SourceConnection);
@@ -58,13 +58,14 @@ namespace Emmetienne.TOMLConfigManager.Pacx.Configurations
 
                 var tomlExecutionService = new TOMLConfigurationService(sourceService, targetService, pacxTOMLLogger);
 
-                var tomlExecuted = tomlExecutionService.PortConfigurations(tomlOperationList);
+                var tomlExecuted = tomlExecutionService.PortConfigurations(tomlOperationList, command.FileBasePath);
 
                 return CommandResult.Success();
             }
             catch (Exception ex)
             {
                 pacxTOMLLogger.LogError($"An error occurred while executing the TOML configuration: {ex.Message}");
+
                 return CommandResult.Fail($"An error occurred while executing the TOML configuration: {ex.Message}");         
             }
         }
