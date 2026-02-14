@@ -31,12 +31,15 @@ namespace Emmetienne.TOMLConfigManager.Services
             this.targetEntityMetadataRepository = repositoryRegistry.Get<EntityMetadataRepository>(RepositoryRegistryKeys.targetEntityMetadataRepository);
         }
 
-        public List<string> SyncFileAndImageFieldsFromSourceRecord(Entity sourceRecord, Entity targetRecord, Dictionary<string, FieldMetadata> entityFieldsMetadata)
+        public List<string> SyncFileAndImageFieldsFromSourceRecord(Entity sourceRecord, Entity targetRecord, List<string> ignoreFields, Dictionary<string, FieldMetadata> entityFieldsMetadata)
         {
             var warningMessages = new List<string>();
 
             foreach (var fieldKey in entityFieldsMetadata.Keys)
             {
+                if (ignoreFields.Contains(fieldKey))
+                    continue;
+
                 var fieldMetadataType = entityFieldsMetadata[fieldKey].AttributeType;
 
                 if (fieldMetadataType != typeof(FileAttributeMetadata) && fieldMetadataType != typeof(ImageAttributeMetadata))

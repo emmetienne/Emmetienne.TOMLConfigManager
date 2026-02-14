@@ -123,7 +123,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
 
             var fileImageSyncHelper = new FileImageFieldSyncService(logger, context.Repositories);
 
-            var warningMessages = fileImageSyncHelper.SyncFileAndImageFieldsFromSourceRecord(sourceRecord, targetRecord, entityFieldMetadata);
+            var warningMessages = fileImageSyncHelper.SyncFileAndImageFieldsFromSourceRecord(sourceRecord, targetRecord, operation.IgnoreFields, entityFieldMetadata);
 
             operation.WarningMessage = string.Join(Environment.NewLine, warningMessages);
         }
