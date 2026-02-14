@@ -30,6 +30,18 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationValidationSt
             if (operation.Fields == null || operation.Fields.Count == 0)
                 errorList.Add("At least one field is required.");
 
+            if (operation.Fields != null)
+            {
+                for (int i = 0; i < operation.Fields.Count; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(operation.Fields[i]))
+                    {
+                        errorList.Add($"Field attribute in position <{i}> cannot be blank");
+                        continue;
+                    }
+                }
+            }
+
             if (operation.Values == null || operation.Values.Count == 0)
                 errorList.Add("At least one value is required.");
 

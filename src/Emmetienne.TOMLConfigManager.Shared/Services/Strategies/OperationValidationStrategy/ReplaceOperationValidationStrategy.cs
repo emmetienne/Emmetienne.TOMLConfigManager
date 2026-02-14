@@ -34,15 +34,25 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationValidationSt
 
             if (operation.MatchOn != null)
             {
-                foreach (var matchField in operation.MatchOn)
+                for (int i = 0; i < operation.MatchOn.Count; i++)
                 {
-                    var fieldMetadata = MetadataManager.Instance.GetAttributeType(operation.Table, matchField, targetMetadataRepository);
+                    {
+                        var matchField = operation.MatchOn[i];
 
-                    if (fieldMetadata == null)
-                        errorList.Add($"Match-on field '{matchField}' does not exist in table '{operation.Table}'.");
+                        if (string.IsNullOrWhiteSpace(matchField))
+                        {
+                            errorList.Add($"Match-on field in position <{i}> cannot be blank");
+                            continue;
+                        }
 
-                    if (fieldMetadata.AttributeType.IsFileOrImageField())
-                        errorList.Add($"Match-on fields cannot be of file or image type. Field <{matchField}>");
+                        var fieldMetadata = MetadataManager.Instance.GetAttributeType(operation.Table, matchField, targetMetadataRepository);
+
+                        if (fieldMetadata == null)
+                            errorList.Add($"Match-on field '{matchField}' does not exist in table '{operation.Table}'.");
+
+                        if (fieldMetadata.AttributeType.IsFileOrImageField())
+                            errorList.Add($"Match-on fields cannot be of file or image type. Field <{matchField}>");
+                    }
                 }
             }
 
@@ -61,6 +71,18 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationValidationSt
             if (operation.Fields?.Count != operation.Values?.Count)
             {
                 errorList.Add("The number of fields must match the number of values.");
+            }
+
+            if (operation.Fields != null)
+            {
+                for (int i = 0; i < operation.Fields.Count; i++)
+                {
+                    if (string.IsNullOrWhiteSpace(operation.Fields[i]))
+                    {
+                        errorList.Add($"Row attribute in position <{i}> cannot be blank");
+                        continue;
+                    }
+                }
             }
 
             if (errorList.Count > 0)
