@@ -18,6 +18,7 @@
 	<PackageIcon>icon_128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/emmetienne/Emmetienne.TOMLConfigManager</RepositoryUrl>
 	<PackageReleaseNotes>
+    - 1.2026.2.15 - Improved TOML parsing and handling of metadata, added support for file and image columns in replace operations, added new parameter to specify the base path for file and image columns, added new parameter to specify the base path for file and image columns in upsert operations.
     - 1.2026.2.11 - Better handling of empty fields in upsert operations
     - 1.2026.2.10 - Added for upsert operation the ability to port file and image columns
     - 1.2026.2.1  - First release
