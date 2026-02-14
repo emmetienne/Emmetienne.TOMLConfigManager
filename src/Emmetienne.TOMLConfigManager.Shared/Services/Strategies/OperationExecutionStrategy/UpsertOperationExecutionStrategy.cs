@@ -8,13 +8,13 @@ using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
 
-namespace Emmetienne.TOMLConfigManager.Services.Strategies
+namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy
 {
-    internal class UpsertOperationStrategy : IOperationStrategy
+    internal class UpsertOperationExecutionStrategy : IOperationExecutionStrategy
     {
         private readonly ILogger logger;
 
-        public UpsertOperationStrategy(ILogger logger)
+        public UpsertOperationExecutionStrategy(ILogger logger)
         {
             this.logger = logger;
         }

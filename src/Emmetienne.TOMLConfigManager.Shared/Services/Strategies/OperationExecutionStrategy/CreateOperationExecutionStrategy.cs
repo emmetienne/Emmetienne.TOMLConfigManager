@@ -4,13 +4,14 @@ using Emmetienne.TOMLConfigManager.Managers;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 using Microsoft.Xrm.Sdk.Metadata;
+using System;
 
-namespace Emmetienne.TOMLConfigManager.Services.Strategies
+namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy
 {
-    internal class CreateOperationStrategy : IOperationStrategy
+    internal class CreateOperationExecutionStrategy : IOperationExecutionStrategy
     {
         private readonly ILogger logger;
-        public CreateOperationStrategy(ILogger logger)
+        public CreateOperationExecutionStrategy(ILogger logger)
         {
             this.logger = logger;
         }
@@ -47,7 +48,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies
                 if (fieldMetadata.AttributeType != typeof(FileAttributeMetadata) && fieldMetadata.AttributeType != typeof(ImageAttributeMetadata))
                     continue;
 
-                var warningMessage = $"/!\\ Record has been created with Id <{createdRecordId}>, but file operations are not supported for create operations, please use replace operation to upload file or images";
+                var warningMessage = $"/!\\ Record has been created with Id <{createdRecordId}>, but file operations are not supported for create operations.{Environment.NewLine}Please use a replace operation to set the <{field}> on the newly created record.";
                 logger.LogWarning(warningMessage);
                 operation.WarningMessage = warningMessage;
                 operation.IsRetryable = false;

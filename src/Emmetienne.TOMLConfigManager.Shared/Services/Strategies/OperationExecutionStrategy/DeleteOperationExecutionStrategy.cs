@@ -3,13 +3,13 @@ using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 
-namespace Emmetienne.TOMLConfigManager.Services.Strategies
+namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy
 {
-    internal class DeleteOperationStrategy : IOperationStrategy
+    internal class DeleteOperationExecutionStrategy : IOperationExecutionStrategy
     {
         private readonly ILogger logger;
 
-        public DeleteOperationStrategy(ILogger logger)
+        public DeleteOperationExecutionStrategy(ILogger logger)
         {
             this.logger = logger;
         }

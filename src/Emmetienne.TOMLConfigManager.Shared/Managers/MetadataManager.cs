@@ -53,6 +53,9 @@ namespace Emmetienne.TOMLConfigManager.Managers
 
         public FieldMetadata GetAttributeType(string entityLogicalName, string fieldLogicalName, EntityMetadataRepository entitymetadataRepository)
         {
+            if (!metadataCache.ContainsKey(entityLogicalName))
+                GetEntityFieldsMetadata(entityLogicalName, entitymetadataRepository);
+
             if (metadataCache.ContainsKey(entityLogicalName) && metadataCache[entityLogicalName].ContainsKey(fieldLogicalName))
             {
                 return metadataCache[entityLogicalName][fieldLogicalName];

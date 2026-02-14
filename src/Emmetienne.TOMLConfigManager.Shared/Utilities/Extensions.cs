@@ -1,5 +1,6 @@
 ﻿using Emmetienne.TOMLConfigManager.Models;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +114,7 @@ namespace Emmetienne.TOMLConfigManager.Utilities
 
             if (!supportedTypes.Contains(raw.Type))
                 throw new Exception($"No operation type of '{raw.Type}' can be parsed for the following TOML operation{Environment.NewLine}{Toml.FromModel(raw)}");
-            
+
             executable.Type = raw.Type ?? string.Empty;
             executable.Table = raw?.Table ?? string.Empty;
             executable.MatchOn = raw?.MatchOn ?? new List<string>();
@@ -138,6 +139,11 @@ namespace Emmetienne.TOMLConfigManager.Utilities
             {
                 return false;
             }
+        }
+
+        public static bool IsFileOrImageField(this Type attributeMetadataType)
+        {
+            return attributeMetadataType == typeof(FileAttributeMetadata) || attributeMetadataType == typeof(ImageAttributeMetadata);
         }
     }
 }

@@ -4,13 +4,13 @@ using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Repositories;
 using System;
 
-namespace Emmetienne.TOMLConfigManager.Services.Strategies
+namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy
 {
-    internal class ReplaceOperationStrategy : IOperationStrategy
+    internal class ReplaceOperationExecutionStrategy : IOperationExecutionStrategy
     {
         private readonly ILogger logger;
 
-        public ReplaceOperationStrategy(ILogger logger)
+        public ReplaceOperationExecutionStrategy(ILogger logger)
         {
             this.logger = logger;
         }

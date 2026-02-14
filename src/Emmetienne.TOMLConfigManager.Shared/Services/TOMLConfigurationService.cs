@@ -3,7 +3,8 @@ using Emmetienne.TOMLConfigManager.Logger;
 using Emmetienne.TOMLConfigManager.Models;
 using Emmetienne.TOMLConfigManager.Registries;
 using Emmetienne.TOMLConfigManager.Repositories;
-using Emmetienne.TOMLConfigManager.Services.Strategies;
+using Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStrategy;
+using Emmetienne.TOMLConfigManager.Services.Strategies.OperationValidationStrategy;
 using Microsoft.Xrm.Sdk;
 using System;
 using System.Collections.Generic;
@@ -50,33 +51,42 @@ namespace Emmetienne.TOMLConfigManager.Services
 
             foreach (var operation in TOMLOperationExecutableList)
             {
-                var strategy = OperationStrategyFactory.GetStrategy(operation.Type, logger);
+                var strategy = OperationExecutionStrategyFactory.GetStrategy(operation.Type, logger);
 
-                if (strategy != null)
-                {
-                    logger.LogDebug($"Executing {operation.Type} Operation for TOML");
-                    logger.LogInfo(operation.ToString());
-
-                    var operationExecutionContext = new OperationExecutionContext(operation, repositoryRegistry, baseSourceFilePath);
-
-                    try
-                    {
-                        strategy.ExecuteOperation(operationExecutionContext);
-                    }
-                    catch (Exception ex)
-                    {
-                        operation.ErrorMessage = ex.Message;
-                        logger.LogError($"Error executing operation: {ex.Message}");
-                        continue;
-                    }
-                }
-                else
+                if (strategy == null)
                 {
                     var errorMessage = $"No strategy found for operation of type {operation.Type}";
                     operation.ErrorMessage = errorMessage;
                     logger.LogError($"Error executing operation: {errorMessage}");
                     continue;
                 }
+
+                logger.LogDebug($"Executing {operation.Type} Operation for TOML");
+                logger.LogInfo(operation.ToString());
+
+                try
+                {
+                    var operationExecutionContext = new OperationExecutionContext(operation, repositoryRegistry, baseSourceFilePath);
+
+                    logger.LogDebug("Performing pre execution validations...");
+
+                    var validationStrategy = OperationValidationStrategyFactory.GetStrategy(operationExecutionContext.OperationExecutable.Type);
+
+                    if (!validationStrategy.ValidateOperation(operationExecutionContext))
+                    {
+                        logger.LogError($"Validation failed for operation: {operationExecutionContext.OperationExecutable.ErrorMessage}");
+                        continue;
+                    }
+
+                    strategy.ExecuteOperation(operationExecutionContext);
+                }
+                catch (Exception ex)
+                {
+                    operation.ErrorMessage = ex.Message;
+                    logger.LogError($"Error executing operation: {ex.Message}");
+                    continue;
+                }
+
             }
 
             return TOMLOperationExecutableList;

@@ -157,7 +157,7 @@ All in a simple, human‑readable TOML format.
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `type` | `string` | The operation type to execute (create, upsert, replace delete) |
+| `type` | `string` | The operation type to execute (create, upsert, replace, delete) |
 | `table` | `string` | The logical name of the target Dataverse table |
 | `match_on` | `List<string>` | Field names used to identify/match existing records |
 | `rows` | `List<List<string>>` | Multiple rows of values corresponding to `match_on` fields |
@@ -165,14 +165,14 @@ All in a simple, human‑readable TOML format.
 | `fields` | `List<string>` | Field names to set on the record |
 | `values` | `List<string>` | Values corresponding to `fields` |
 
-## Properties Quick Reference
+## Properties and Feature Quick Reference
 
-| type | `table` | `match_on` | `rows` | `fields` | `values` | `ignore_fields` |
-|------|---------|-----------|--------|----------|----------|----------------|
-| `create` | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
-| `replace` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| `upsert` | ✅ | ✅ | ✅ | ❌ | ❌ | ⚪ Optional |
-| `delete` | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| type | `table` | `match_on` | `rows` | `fields` | `values` | `ignore_fields` | File\Image support | 
+|------|---------|-----------|--------|----------|----------|----------------|----------------||
+| `create` | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | ❌ |
+| `replace` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| `upsert` | ✅ | ✅ | ✅ | ❌ | ❌ | ⚪ Optional | ✅ |
+| `delete` | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 
 ## Operation Types
 
@@ -256,6 +256,51 @@ rows = [["ACC001"]]
 ```
 
 ---
+## File & Image Column Support
+
+The engine supports synchronization of Dataverse file and image columns whithin `upsert` and `replace` operations.
+### Upsert Behavior
+In `upsert` operations the file/image content is copied from the source environment to the target environment.
+If a file/image column is null in the source environment, it will be nulled in the target environment as well.
+File/Image fields can be ignored if explcitly listed in the `ignore_fields` property.
+
+### Replace Behavior
+
+In `replace` operations the file/image content is set based on the provided value.
+
+#### File/Image Value Syntax
+
+File and image values can be specified using a scheme-based syntax inside values:
+
+#### Supported formats
+```
+base64:<content>|<filename>
+```
+
+```
+file:<path>|<filename>
+```
+
+#### Examples:
+```
+values = [
+  "base64:AAABBBCCC...|document.pdf"
+]
+```
+
+```
+values = [
+  "file:./assets/logo.png|logo.png"
+]
+```
+
+#### Path Resolution
+
+Absolute paths are used as-is.
+
+Relative paths are resolved using the host-defined base path.
+
+In CI/CD scenarios, the base path can be explicitly configured to ensure deterministic resolution.
 
 ##  Date & Time Handling
 
@@ -293,8 +338,6 @@ This project is licensed under the MIT License.
 
 This project relies on the excellent open-source library:
 
-- **Tomlyn** by Alexandre Mutel  
-  A .NET TOML parser licensed under BSD-2-Clause.  
-  https://github.com/xoofx/Tomlyn
+- **Tomlyn** by Alexandre Mutel, a .NET TOML parser licensed under BSD-2-Clause. https://github.com/xoofx/Tomlyn
 
 See [THIRD-PARTY-NOTICES.md](https://github.com/emmetienne/Emmetienne.TOMLConfigManager/blob/master/THIRD-PARTY-NOTICES.md) for full license details.
