@@ -30,8 +30,12 @@ namespace Emmetienne.TOMLConfigManager.Managers
                 foreach (var attribute in response.EntityMetadata.Attributes)
                 {
                     var fieldMetadata = new FieldMetadata();
-                    fieldMetadata.AttributeType = attribute.GetType();
 
+                    if (attribute.IsPrimaryId == true)
+                        fieldMetadata.AttributeType = typeof(UniqueIdentifierAttributeMetadata);
+                    else
+                        fieldMetadata.AttributeType = attribute.GetType();
+                     
                     if (attribute.GetType() == typeof(LookupAttributeMetadata))
                         fieldMetadata.EntityReferenceTarget = ((LookupAttributeMetadata)attribute).Targets[0];
 
