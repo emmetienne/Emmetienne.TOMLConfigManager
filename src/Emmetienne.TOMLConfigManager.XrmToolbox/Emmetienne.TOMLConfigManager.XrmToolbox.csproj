@@ -32,6 +32,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="McTools.Xrm.Connection, Version=1.2025.7.63, Culture=neutral, PublicKeyToken=96037217801d9658, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MscrmTools.Xrm.Connection.1.2025.7.63\lib\net48\McTools.Xrm.Connection.dll</HintPath>
@@ -333,7 +337,7 @@
       <InputAssemblies Include="$(OutputPath)Emmetienne.TOMLConfigManager.dll" />
       <InputAssemblies Include="$(OutputPath)Tomlyn.dll" />
     </ItemGroup>
-    <ILRepack Parallel="true" InputAssemblies="@(InputAssemblies)" LibraryPath="$(OutputPath)" OutputFile="$(OutputPath)Emmetienne.TOMLConfigManager.dll" TargetKind="Dll" />
+    <ILRepack Parallel="true" DebugInfo="true" InputAssemblies="@(InputAssemblies)" LibraryPath="$(OutputPath)" OutputFile="$(OutputPath)Emmetienne.TOMLConfigManager.dll" TargetKind="Dll" />
     <!-- Delete the merged Tomlyn.dll after merge -->
     <Delete Files="$(OutputPath)Tomlyn.dll" />
   </Target>

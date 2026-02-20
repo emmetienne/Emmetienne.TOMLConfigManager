@@ -32,7 +32,7 @@ namespace Emmetienne.TOMLConfigManager.Services.Strategies.OperationExecutionStr
 
             var targetRecordId = GetTargetRecordId(targetD365RecordRepository, operation);
 
-            if (targetRecordId == null && operation.ErrorMessage != null)
+            if (!string.IsNullOrWhiteSpace(operation.ErrorMessage))
                 return;
 
             // create a deepclone of the source record to be used for upsert operation, this is to ensure that the source record remains unchanged for file and image field synchronization later
